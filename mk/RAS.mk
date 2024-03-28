@@ -1,11 +1,11 @@
-TOP_ENTRY := ./src/uFTB/FauFTB.sv
-TOP_FILES := ./src/uFTB.txt
+TOP_ENTRY := ./src/RAS/RAS.sv
+TOP_FILES := ./src/RAS.txt
 TL ?= cpp
 
 ifneq ($(TARGET),)
 	TARGET := $(TARGET)
 else
-	TARGET := out/picker_out_uFTB
+	TARGET := out/picker_out_RAS
 endif
 
 # if EXAMPLE is set, then _EXAMPLE is set to -e
@@ -23,12 +23,12 @@ ifneq ($(WAVE), false)
 	ifneq ($(WAVE), true)
 		_WAVEFORM := -w $(WAVE)
 	else
-		_WAVEFORM := -w uFTB.fst
+		_WAVEFORM := -w RAS.fst
 	endif
 endif
 _WAVEFORM ?=
 
-uftb:
+ras:
 	@echo "Building tage module with parameters: "
 	@echo "TL=${TL}"
 	@echo "TOP_ENTRY=${TOP_ENTRY}"

@@ -1,6 +1,6 @@
 TOP_ENTRY := ./src/FTB/FTB.sv
 TOP_FILES := ./src/FTB.txt
-LANG ?= cpp
+TL ?= cpp
 
 ifneq ($(TARGET),)
 	TARGET := $(TARGET)
@@ -30,7 +30,7 @@ _WAVEFORM ?=
 
 ftb:
 	@echo "Building tage module with parameters: "
-	@echo "LANG=${LANG}"
+	@echo "TL=${TL}"
 	@echo "TOP_ENTRY=${TOP_ENTRY}"
 	@echo "TOP_FILES=${TOP_FILES}"
 	@echo "TARGET=${TARGET}"
@@ -40,7 +40,7 @@ ftb:
 
 	@mkdir -p out
 	rm -rf ${TARGET} 
-	picker ${TOP_ENTRY} -f ${TOP_FILES} -l ${LANG} \
+	picker ${TOP_ENTRY} -f ${TOP_FILES} -l ${TL} \
 		 -t ${TARGET} ${_WAVEFORM}${_EXAMPLE} ${_VERBOSE}
 		
 	cd ${TARGET} && make

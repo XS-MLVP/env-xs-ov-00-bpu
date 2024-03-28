@@ -15,7 +15,7 @@ Install the following tools before running the testcases.
 ### uFTB
 
 ```bash
-make uftb LANG=python
+make uftb TL=python
 ```
 
 Then you will see the following files in the `out` directory. The whole directory is the python module of uFTB of XiangShan.  
@@ -61,11 +61,11 @@ The other modules such as Tage_SC are similar to uFTB. You can import them in th
 ### Tage SC
 
 ```bash
-make tage_sc LANG=python
+make tage_sc TL=python
 ```
 
 ### FTB
 
 ```bash
-make ftb LANG=python
+make ftb TL=python
 ```

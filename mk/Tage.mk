@@ -1,6 +1,6 @@
 TOP_ENTRY := ./src/TageSC/Tage_SC.sv
 TOP_FILES := ./src/Tage_SC.txt
-LANG ?= cpp
+TL ?= cpp
 
 ifneq ($(TARGET),)
 	TARGET := $(TARGET)
@@ -30,7 +30,7 @@ _WAVEFORM ?=
 
 tage_sc:
 	@echo "Building tage module with parameters: "
-	@echo "LANG=${LANG}"
+	@echo "TL=${TL}"
 	@echo "TOP_ENTRY=${TOP_ENTRY}"
 	@echo "TOP_FILES=${TOP_FILES}"
 	@echo "TARGET=${TARGET}"
@@ -40,7 +40,7 @@ tage_sc:
 
 	@mkdir -p out
 	rm -rf ${TARGET} 
-	picker ${TOP_ENTRY} -f ${TOP_FILES} -l ${LANG} \
+	picker ${TOP_ENTRY} -f ${TOP_FILES} -l ${TL} \
 		 -t ${TARGET} ${_WAVEFORM}${_EXAMPLE} ${_VERBOSE}
 		
 	cd ${TARGET} && make

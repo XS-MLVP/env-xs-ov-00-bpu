@@ -7,7 +7,8 @@
 
 
 **开源开放验证官网：[www.openverify.cc](https://openverify.cc)**
-**gitlink活动地址：[https://www.gitlink.org.cn/glcc/2023/subjects/detail/473](https://www.gitlink.org.cn/glcc/2023/subjects/detail/473)**
+
+**Gitlink活动地址：[https://www.gitlink.org.cn/glcc/2023/subjects/detail/473](https://www.gitlink.org.cn/glcc/2023/subjects/detail/473)**
 
 
 ## 简介

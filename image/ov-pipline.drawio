@@ -1,0 +1,105 @@
+<mxfile host="app.diagrams.net" modified="2024-04-11T06:42:17.627Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.0.0" etag="6yX-ULCYsPwj42ocDWqh" version="24.0.7" type="device">
+  <diagram name="Page-1" id="FTH7PsahlGnXAK5tEtyi">
+    <mxGraphModel dx="843" dy="512" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="NuuIC_HhkidKEVra6tKi-31" value="" style="group" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="60" y="230" width="630" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-1" value="在线报名" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="NuuIC_HhkidKEVra6tKi-31">
+          <mxGeometry x="80" y="30" width="20" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-2" value="资格认证" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="NuuIC_HhkidKEVra6tKi-31">
+          <mxGeometry x="140" y="30" width="20" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-3" value="F&lt;div&gt;o&lt;/div&gt;&lt;div&gt;r&lt;/div&gt;&lt;div&gt;k&lt;/div&gt;&lt;div&gt;仓库&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="NuuIC_HhkidKEVra6tKi-31">
+          <mxGeometry x="200" y="30" width="20" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="NuuIC_HhkidKEVra6tKi-31" source="NuuIC_HhkidKEVra6tKi-4" target="NuuIC_HhkidKEVra6tKi-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-4" value="领取任务" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="NuuIC_HhkidKEVra6tKi-31">
+          <mxGeometry x="250" y="30" width="20" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-21" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="NuuIC_HhkidKEVra6tKi-31" source="NuuIC_HhkidKEVra6tKi-6" target="NuuIC_HhkidKEVra6tKi-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-6" value="测试点分解&amp;amp;验证方案" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="NuuIC_HhkidKEVra6tKi-31">
+          <mxGeometry x="310" y="30" width="30" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-7" value="编写&lt;div&gt;&amp;amp;测试测用例&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="NuuIC_HhkidKEVra6tKi-31">
+          <mxGeometry x="370" y="30" width="30" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-22" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="NuuIC_HhkidKEVra6tKi-31" source="NuuIC_HhkidKEVra6tKi-8" target="NuuIC_HhkidKEVra6tKi-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="NuuIC_HhkidKEVra6tKi-31" source="NuuIC_HhkidKEVra6tKi-8" target="NuuIC_HhkidKEVra6tKi-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="NuuIC_HhkidKEVra6tKi-31" source="NuuIC_HhkidKEVra6tKi-8" target="NuuIC_HhkidKEVra6tKi-7">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="440" y="150" />
+              <mxPoint x="385" y="150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-8" value="b&lt;div&gt;u&lt;/div&gt;&lt;div&gt;g汇报&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="NuuIC_HhkidKEVra6tKi-31">
+          <mxGeometry x="430" y="30" width="20" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="NuuIC_HhkidKEVra6tKi-31" source="NuuIC_HhkidKEVra6tKi-9" target="NuuIC_HhkidKEVra6tKi-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-9" value="测试文档撰写" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="NuuIC_HhkidKEVra6tKi-31">
+          <mxGeometry x="480" y="30" width="20" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-26" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="NuuIC_HhkidKEVra6tKi-31" source="NuuIC_HhkidKEVra6tKi-10" target="NuuIC_HhkidKEVra6tKi-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-10" value="P&lt;div&gt;P&lt;/div&gt;&lt;div&gt;T在线答辩&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="NuuIC_HhkidKEVra6tKi-31">
+          <mxGeometry x="530" y="30" width="20" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-12" value="每个队伍、每个阶段的基本数据（阶段、任务、积分）相互公开" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="NuuIC_HhkidKEVra6tKi-31">
+          <mxGeometry x="80" width="470" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-13" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="NuuIC_HhkidKEVra6tKi-31">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="30" y="79.70999999999998" as="sourcePoint" />
+            <mxPoint x="70" y="79.70999999999998" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-14" value="队伍" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="NuuIC_HhkidKEVra6tKi-31">
+          <mxGeometry y="50" width="20" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-15" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="NuuIC_HhkidKEVra6tKi-31">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="100" y="79.70999999999998" as="sourcePoint" />
+            <mxPoint x="140" y="79.70999999999998" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-16" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="NuuIC_HhkidKEVra6tKi-31" source="NuuIC_HhkidKEVra6tKi-2" target="NuuIC_HhkidKEVra6tKi-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="110" y="89.70999999999998" as="sourcePoint" />
+            <mxPoint x="150" y="89.70999999999998" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-17" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="NuuIC_HhkidKEVra6tKi-31" target="NuuIC_HhkidKEVra6tKi-4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="220" y="79.70999999999998" as="sourcePoint" />
+            <mxPoint x="250" y="80" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-18" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="NuuIC_HhkidKEVra6tKi-31" source="NuuIC_HhkidKEVra6tKi-4" target="NuuIC_HhkidKEVra6tKi-6">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="270" y="79.70999999999998" as="sourcePoint" />
+            <mxPoint x="300" y="80" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NuuIC_HhkidKEVra6tKi-25" value="结束&lt;div&gt;结算&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="NuuIC_HhkidKEVra6tKi-31">
+          <mxGeometry x="590" y="60" width="40" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

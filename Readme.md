@@ -1,6 +1,6 @@
 # The first phase of Open Verification for the Kunminghu microarchitecture of Xiangshan: Kunminghu's BPU Module UT Verification in Action.
 
-[中文文档](Readme_cn.md)
+[中文文档](/Readme_cn.md)
 
 This project aims to explore open-sourced subdivision verification of the high-performance open-source RISC-V OpenXiangshan processor's microarchitecture. It introduces new tools and methods based on Python, enabling all students interested in chip design and verification to quickly grasp and study the XiangShan microarchitecture. This phase provides a detailed introduction to the principles and implementation of the branch prediction module of the XiangShan Kunminghu architecture, along with the corresponding open-source verification environment. Participants in this phase can earn points and rewards by submitting bugs, writing verification reports, and more.
 
@@ -15,7 +15,7 @@ This project utilizes open-source tools for the open verification of open-source
 
 ## Kunminghu microarchitecture
 
-The Kunming Lake architecture is the third-generation high-performance microarchitecture of the XiangShan open-source processor. For the architecture diagram, please refer to the [Kunminghu architecture diagram]().
+The Kunming Lake architecture is the third-generation high-performance microarchitecture of the XiangShan open-source processor. For the architecture diagram, please refer to the [Kunminghu architecture diagram](https://github.com/OpenXiangShan/XiangShan/raw/kunminghu/images/xs-arch-nanhu.svg).
 
 ## Chip verification
 
@@ -27,9 +27,9 @@ Chip validation is a crucial aspect of chip design work. Skipping or insufficien
 
 1. [Introduction to Shanhai BPU](https://open-verify.cc/xs-bpu/docs/): Learn about branch prediction and the basic predictors used in the Shanhai processor.
 
-1. [How to Participate in This Activity](doc/join_cn.md): Learn how to participate in this activity and the rules.
+1. [How to Participate in This Activity](/doc/join_cn.md): Learn how to participate in this activity and the rules.
 
-1. [Building Verification Environment](doc/env_cn.md): Learn how to set up the basic verification environment, how to validate, and submit validation results.
+1. [Building Verification Environment](/doc/env_cn.md): Learn how to set up the basic verification environment, how to validate, and submit validation results.
 
 ## Repository Directory
 The structure of this repository directory and corresponding explanations are as follows:

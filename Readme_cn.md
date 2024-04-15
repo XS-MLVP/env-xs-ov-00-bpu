@@ -6,7 +6,7 @@
 本项目的目标是对高性能开源RISC-V香山处理器的微架构进行开放式分包验证的探索。它提供了基于Python的新工具、新方法，让所有对芯片设计与验证感兴趣的同学能够快速了解香山微架构，学习香山微架构。本期活动对香山昆明湖架构的分支预测模块的原理以及实现进行了详细介绍，并提供了对应的开源验证环境。参本次活动的同学，通过提交Bug、编写验证报告等获取积分与奖励。
 
 
-**开源开放验证官网：[www.openverify.cc](https://openverify.cc)**
+**开源开放验证官网：[open-verify.cc](https://open-verify.cc)**
 
 **Gitlink活动地址：[https://www.gitlink.org.cn/glcc/2023/subjects/detail/473](https://www.gitlink.org.cn/glcc/2023/subjects/detail/473)**
 

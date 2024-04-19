@@ -1,5 +1,5 @@
-TOP_ENTRY := ./src/RAS/RAS.sv
-TOP_FILES := ./src/RAS.txt
+TOP_ENTRY := ./rtl_src/RAS/RAS.sv
+TOP_FILES := ./rtl_src/RAS.txt
 TL ?= cpp
 
 ifneq ($(TARGET),)

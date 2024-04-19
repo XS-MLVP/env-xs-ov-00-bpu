@@ -88,7 +88,7 @@ make tage_sc TL=python
 make ftb TL=python
 ```
 
-**支持的模块名称有：uftb、tage_sc、ftb、ras。也可以通过如下命令，一次性生成所有DUT模块。**
+**支持的模块名称有：uftb、tage_sc、ftb、ras、ittage。也可以通过如下命令，一次性生成所有DUT模块。**
 
 ```bash
 make all TL=python

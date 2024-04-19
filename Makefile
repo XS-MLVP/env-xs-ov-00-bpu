@@ -21,7 +21,10 @@ ftb:
 ras:
 	make -f ./mk/RAS.mk ras
 
+ittage:
+	make -f ./mk/ITTAGE.mk ittage
+
 filter:
 	cat log|grep Cannot |awk '{print $8}'| sort| uniq|tr -d "'"
 
-all: uftb tage_sc ftb ras
+all: uftb tage_sc ftb ras ittage

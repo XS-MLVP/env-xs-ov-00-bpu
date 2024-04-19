@@ -1,5 +1,5 @@
-TOP_ENTRY := ./src/TageSC/Tage_SC.sv
-TOP_FILES := ./src/Tage_SC.txt
+TOP_ENTRY := ./rtl_src/TageSC/Tage_SC.sv
+TOP_FILES := ./rtl_src/Tage_SC.txt
 TL ?= cpp
 
 ifneq ($(TARGET),)

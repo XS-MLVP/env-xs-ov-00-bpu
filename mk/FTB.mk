@@ -1,5 +1,5 @@
-TOP_ENTRY := ./src/FTB/FTB.sv
-TOP_FILES := ./src/FTB.txt
+TOP_ENTRY := ./rtl_src/FTB/FTB.sv
+TOP_FILES := ./rtl_src/FTB.txt
 TL ?= cpp
 
 ifneq ($(TARGET),)

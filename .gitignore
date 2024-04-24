@@ -4,3 +4,4 @@ split_verilogs
 **/__pycache__/
 *.fst
 **/UT_*
+NemuBR/

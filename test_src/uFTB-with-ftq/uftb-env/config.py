@@ -1,0 +1,26 @@
+PROGRAM_NAME = "microbench.bin"
+MAX_CYCLE = 10000
+
+import os
+ROOT_PATH = os.path.dirname(os.path.abspath(__file__)) + "/../../.."
+DUT_PATH = ROOT_PATH + "/out/picker_out_uFTB"
+UTILS_PATH = ROOT_PATH + "/utils"
+RROGRAM_FORDER_PATH = UTILS_PATH + "/ready-to-run"
+PROGRAM_PATH = RROGRAM_FORDER_PATH + "/" + PROGRAM_NAME
+
+
+INST_OFFSET_BITS = 1
+PREDICT_WIDTH_OFFSET_BITS = 4
+
+PREDICT_WIDTH_BYTES = 32
+RESET_VECTOR = 0x80000000
+
+UFTB_WAYS_NUM = 32
+UFTB_TAG_SIZE = 16
+
+
+TAR_OVF = 1
+TAR_UDF = 2
+TAR_FIT = 0
+
+

@@ -1,3 +1,0 @@
-./src/RAS/RASStack.sv
-./src/common/ext_sram.v
-./src/common/DelayN_2.sv

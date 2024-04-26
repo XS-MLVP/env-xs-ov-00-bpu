@@ -1,5 +1,5 @@
-TOP_ENTRY := ./rtl_src/uFTB/FauFTB.sv
-TOP_FILES := ./rtl_src/uFTB.txt
+TOP_ENTRY := ./rtl/uFTB/FauFTB.sv
+TOP_FILES := ./rtl/uFTB.txt
 TL ?= cpp
 
 ifneq ($(TARGET),)
@@ -40,8 +40,6 @@ uftb:
 
 	@mkdir -p out
 	rm -rf ${TARGET} 
-	picker ${TOP_ENTRY} -f ${TOP_FILES} -l ${TL} \
+	picker ${TOP_ENTRY} -f ${TOP_FILES} -l ${TL} -c\
 		 -t ${TARGET} ${_WAVEFORM}${_EXAMPLE} ${_VERBOSE}
 		
-	cd ${TARGET} && make
-

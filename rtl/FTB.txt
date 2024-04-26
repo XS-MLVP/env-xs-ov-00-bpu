@@ -1,0 +1,9 @@
+./rtl/FTB/FTBBank.sv
+./rtl/FTB/FTBEntryGen.sv
+./rtl/FTB/SRAMTemplate_9.sv
+./rtl/FTB/array_3.sv
+./rtl/common/ext_sram.v
+./rtl/common/DelayN_2.sv
+./rtl/common/DelayN_4.sv
+./rtl/common/DelayN_5.sv
+./rtl/common/DelayN_6.sv

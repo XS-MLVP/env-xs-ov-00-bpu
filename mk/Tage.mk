@@ -1,5 +1,5 @@
-TOP_ENTRY := ./rtl_src/TageSC/Tage_SC.sv
-TOP_FILES := ./rtl_src/Tage_SC.txt
+TOP_ENTRY := ./rtl/TageSC/Tage_SC.sv
+TOP_FILES := ./rtl/Tage_SC.txt
 TL ?= cpp
 
 ifneq ($(TARGET),)
@@ -40,8 +40,6 @@ tage_sc:
 
 	@mkdir -p out
 	rm -rf ${TARGET} 
-	picker ${TOP_ENTRY} -f ${TOP_FILES} -l ${TL} \
+	picker ${TOP_ENTRY} -f ${TOP_FILES} -l ${TL} -c\
 		 -t ${TARGET} ${_WAVEFORM}${_EXAMPLE} ${_VERBOSE}
 		
-	cd ${TARGET} && make
-

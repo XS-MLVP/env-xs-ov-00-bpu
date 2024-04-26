@@ -1,5 +1,5 @@
-TOP_ENTRY := ./rtl_src/ITTAGE/ITTage.sv
-TOP_FILES := ./rtl_src/ITTAGE.txt
+TOP_ENTRY := ./rtl/ITTAGE/ITTage.sv
+TOP_FILES := ./rtl/ITTAGE.txt
 TL ?= cpp
 
 ifneq ($(TARGET),)
@@ -40,8 +40,6 @@ ittage:
 
 	@mkdir -p out
 	rm -rf ${TARGET} 
-	picker ${TOP_ENTRY} -f ${TOP_FILES} -l ${TL} \
+	picker ${TOP_ENTRY} -f ${TOP_FILES} -l ${TL} -c\
 		 -t ${TARGET} ${_WAVEFORM}${_EXAMPLE} ${_VERBOSE}
-		
-	cd ${TARGET} && make
 

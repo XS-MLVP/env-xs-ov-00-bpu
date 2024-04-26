@@ -1,5 +1,5 @@
-TOP_ENTRY := ./rtl_src/FTB/FTB.sv
-TOP_FILES := ./rtl_src/FTB.txt
+TOP_ENTRY := ./rtl/FTB/FTB.sv
+TOP_FILES := ./rtl/FTB.txt
 TL ?= cpp
 
 ifneq ($(TARGET),)
@@ -40,8 +40,6 @@ ftb:
 
 	@mkdir -p out
 	rm -rf ${TARGET} 
-	picker ${TOP_ENTRY} -f ${TOP_FILES} -l ${TL} \
+	picker ${TOP_ENTRY} -f ${TOP_FILES} -l ${TL} -c\
 		 -t ${TARGET} ${_WAVEFORM}${_EXAMPLE} ${_VERBOSE}
-		
-	cd ${TARGET} && make
 

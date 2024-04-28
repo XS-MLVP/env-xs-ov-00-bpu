@@ -23,7 +23,7 @@ def get_pred(uFTB: FauFTB, pc: int) -> Tuple[int, FTBEntry, bool, bool]:
     uFTB.io_s1_fire_0.value = 1
     uFTB.io_s2_fire_0.value = 1
     return uFTB.s1_full_pred()
-    
+
 
 
 def set_update(uFTB: FauFTB, entry: Tuple[int, FTBEntry, bool, bool]):
@@ -32,8 +32,12 @@ def set_update(uFTB: FauFTB, entry: Tuple[int, FTBEntry, bool, bool]):
     # print("set_update", entry[1].brSlot)
     uFTB.update_ftb_entry(entry[0], entry[1], (entry[2], entry[3]))
 
+import mlvp.funcov as fc
+from mlvp.reporter import *
 
-def main():
+def test_raw(request):
+
+    set_line_coverage(request, "VFauFTB_coverage.dat")
 
     uFTB: FauFTB = FauFTB()
     ftb_entry_list()
@@ -56,4 +60,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    test_raw()

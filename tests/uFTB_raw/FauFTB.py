@@ -1,3 +1,8 @@
+import os
+ROOT_PATH = os.path.dirname(os.path.abspath(__file__)) + "/../.."
+DUT_PATH = ROOT_PATH + "/out/picker_out_uFTB"
+os.sys.path.append(DUT_PATH)
+
 from typing import Any, Tuple
 from UT_FauFTB import *
 from FTBEntry import *

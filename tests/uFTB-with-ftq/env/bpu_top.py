@@ -1,7 +1,7 @@
 from mlvp import *
-from bundle import *
-from ftq import *
-from uftb_model import uFTBModel
+from .bundle import *
+from .ftq import *
+from .uftb_model import uFTBModel
 
 def assert_equal(a, b):
     if a != b:

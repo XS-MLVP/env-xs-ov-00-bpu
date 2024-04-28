@@ -1,4 +1,4 @@
-from config import *
+from .config import *
 
 import os
 os.sys.path.append(UTILS_PATH)

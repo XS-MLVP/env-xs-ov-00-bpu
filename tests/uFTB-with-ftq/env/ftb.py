@@ -1,4 +1,4 @@
-from utils import *
+from .utils import *
 
 class FTBSlot:
     def __init__(self):

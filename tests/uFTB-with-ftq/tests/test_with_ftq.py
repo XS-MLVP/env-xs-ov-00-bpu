@@ -1,10 +1,12 @@
 import mlvp
 
-from bundle import *
-from bpu_top import *
-from config import MAX_CYCLE
-
 import os
+os.sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
+
+from env.bundle import *
+from env.bpu_top import *
+from env.config import *
+
 os.sys.path.append(DUT_PATH)
 
 from UT_FauFTB import *
@@ -32,8 +34,22 @@ async def uftb_test():
 
     await ClockCycles(uFTB, MAX_CYCLE)
 
-if __name__ == "__main__":
-    mlvp.run(uftb_test())
-    uFTB.finalize()
 
+
+import mlvp.funcov as fc
+from mlvp.reporter import *
+
+def test_uftb(request):
+    g = fc.CovGroup("coverage_group_1")
+    g.add_watch_point(uFTB.io_s0_fire_0, {
+        "s0_fire": fc.Eq(1),
+    }, name="s0_fire_0")
+
+    set_func_coverage(request, g)
+    set_line_coverage(request, "VFauFTB_coverage.dat")
+
+    mlvp.run(uftb_test())
+    g.sample()
+
+    uFTB.finalize()
     pred_stat.summary()

@@ -1,9 +1,9 @@
-from bundle import *
-from config import *
-from utils import *
-from executor import Executor
-from ftb import *
 from random import random
+from .bundle import *
+from .config import *
+from .utils import *
+from .executor import Executor
+from .ftb import *
 
 class PredictionStatistician:
     """Predictive condition statistician for branch instructions"""

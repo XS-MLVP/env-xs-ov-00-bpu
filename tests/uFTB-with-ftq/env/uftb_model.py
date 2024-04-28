@@ -1,5 +1,5 @@
 from mlvp.utils import PLRU, TwoBitsCounter
-from ftb import *
+from .ftb import *
 
 class uFTBWay:
     def __init__(self):

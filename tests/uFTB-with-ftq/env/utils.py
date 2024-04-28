@@ -1,4 +1,4 @@
-from config import *
+from .config import *
 
 def get_slot_offset(pc, target):
     return ((target - pc) >> INST_OFFSET_BITS) & ((1 << PREDICT_WIDTH_OFFSET_BITS) - 1)

@@ -5,7 +5,7 @@ from .uftb_model import uFTBModel
 
 def assert_equal(a, b):
     if a != b:
-        print(f"[Error] Expected is {a}, but actual is {b}")
+        logger.error(f"[Error] Expected is {a}, but actual is {b}")
         exit(1)
 
 def compare_uftb_full_pred(uftb_output, std_output):
@@ -148,27 +148,27 @@ class BPUTop:
             else:
                 self.s1_hit_way = None
 
-            # print("-" * 30)
+            logger.debug("-" * 30)
             if self.s1_fire:
                 # Debug Imformation
-                # print("[BPU]")
-                # print("New prediction at", hex(self.s1_pc))
-                # if bpu_output["s1"]["full_pred"]["hit"]:
-                #     print("Dut Hit")
+                logger.debug("[BPU]")
+                logger.debug(f"New prediction at {hex(self.s1_pc)}")
+                if bpu_output["s1"]["full_pred"]["hit"]:
+                    logger.debug("Dut Hit")
 
-                # print("FTB Entry in pred result: ")
-                # if bpu_output["s1"]["full_pred"]["hit"]:
-                #     ftb_entry.print(self.s1_pc)
-                # else:
-                #     print("No FTB Entry")
-                # print("br_taken_mask:", bpu_output["s1"]["full_pred"]["br_taken_mask_0"], bpu_output["s1"]["full_pred"]["br_taken_mask_1"])
+                logger.debug("FTB Entry in pred result: ")
+                if bpu_output["s1"]["full_pred"]["hit"]:
+                    logger.debug(ftb_entry.__str__(self.s1_pc))
+                else:
+                    logger.debug("No FTB Entry")
+                logger.debug(f"br_taken_mask: {bpu_output['s1']['full_pred']['br_taken_mask_0']}, {bpu_output['s1']['full_pred']['br_taken_mask_1']}")
 
-                # print("FTB Entry in uFTB Model: ")
-                # if model_output:
-                #     model_output[0].print(self.s1_pc)
-                #     print("br_taken_mask:", model_output[1])
-                # else:
-                #     print("No FTB Entry")
+                logger.debug("FTB Entry in uFTB Model: ")
+                if model_output:
+                    logger.debug(model_output[0].__str__(self.s1_pc))
+                    logger.debug(f"br_taken_mask: {model_output[1]}")
+                else:
+                    logger.debug("No FTB Entry")
 
                 # Compare dut output and uFTB model output
                 expected_hit = model_output is not None

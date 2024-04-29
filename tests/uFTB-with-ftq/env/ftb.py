@@ -8,15 +8,18 @@ class FTBSlot:
         self.tarStart = 0
         self.sharing = 0
 
-    def print(self, pc, is_cond_branch):
+    def __str__(self, pc, is_cond_branch):
+        str = ""
         if not self.valid:
-            print("*\tInvalid FTBSlot")
-            return
+            str += "*\tInvalid FTBSlot\n"
+            return str
 
         if is_cond_branch:
-            print(f"*\t[Conditional Branch Inst] at PC {hex(get_slot_addr(pc, self.offset))}: Target: {hex(get_target_addr(pc, self.tarStart, self.lower, 12))}")
+            str += f"*\t[Conditional Branch Inst] at PC {hex(get_slot_addr(pc, self.offset))}: Target: {hex(get_target_addr(pc, self.tarStart, self.lower, 12))}\n"
         else:
-            print(f"*\t[Jump Inst] PC {hex(get_slot_addr(pc, self.offset))}: Target: {hex(get_target_addr(pc, self.tarStart, self.lower, 20))}")
+            str += f"*\t[Jump Inst] PC {hex(get_slot_addr(pc, self.offset))}: Target: {hex(get_target_addr(pc, self.tarStart, self.lower, 20))}\n"
+
+        return str
 
 
 class FTBEntry:
@@ -165,16 +168,17 @@ class FTBEntry:
 
         return entry
 
-
-    def print(self, pc):
-        print(f"[FTBEntry at {hex(pc)}]")
-        print(f"* Slots:")
-        self.brSlot.print(pc, True)
-        self.tailSlot.print(pc, self.tailSlot.sharing)
-        print("* Other Info:")
-        print(f"*\tFallthrough Addr: {hex(get_fallthrough_addr(pc, self.pftAddr, self.carry))}")
-        print(f"*\tisCall: {self.isCall}, isRet: {self.isRet}, isJalr: {self.isJalr}, isJal: {self.isJal}")
-        print(f"*\tlast_may_be_rvi_call: {self.last_may_be_rvi_call}, always_taken: {self.always_taken}")
+    def __str__(self, pc) -> str:
+        str = ""
+        str += f"[FTBEntry] at {hex(pc)}\n"
+        str += f"* Slots:\n"
+        str += self.brSlot.__str__(pc, True)
+        str += self.tailSlot.__str__(pc, self.tailSlot.sharing)
+        str += "* Other Info:\n"
+        str += f"*\tFallthrough Addr: {hex(get_fallthrough_addr(pc, self.pftAddr, self.carry))}\n"
+        str += f"*\tisCall: {self.isCall}, isRet: {self.isRet}, isJalr: {self.isJalr}, isJal: {self.isJal}\n"
+        str += f"*\tlast_may_be_rvi_call: {self.last_may_be_rvi_call}, always_taken: {self.always_taken}\n"
+        return str
 
 class FTBProvider():
     def __init__(self):

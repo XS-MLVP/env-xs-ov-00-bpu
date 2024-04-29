@@ -3,6 +3,7 @@ split_verilogs
 .vscode
 **/__pycache__/
 *.fst
+*.log
 *.dat
 **/UT_*
 NemuBR/

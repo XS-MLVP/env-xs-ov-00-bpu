@@ -62,6 +62,9 @@ def test_uftb(request):
     set_func_coverage(request, g)
     set_line_coverage(request, "VFauFTB_coverage.dat")
 
+    import logging
+    mlvp.setup_logging(log_level=logging.INFO, log_file="uftb_with_ftq.log")
+
     mlvp.run(uftb_test())
 
     uFTB.finalize()

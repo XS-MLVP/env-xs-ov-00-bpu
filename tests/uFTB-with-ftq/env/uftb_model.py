@@ -1,4 +1,5 @@
 from mlvp.utils import PLRU, TwoBitsCounter
+from mlvp import logger
 from .ftb import *
 
 class uFTBWay:
@@ -42,7 +43,7 @@ class uFTBModel:
 
     def print_all_ftb_ways(self):
         for i in range(UFTB_WAYS_NUM):
-            print(f"way {i}: valid: {self.ftbways[i].valid}, tag: {hex(self.ftbways[i].tag << 1)}")
+            logger.debug(f"way {i}: valid: {self.ftbways[i].valid}, tag: {hex(self.ftbways[i].tag << 1)}")
 
     def _generate_br_taken_mask(self, hit_way):
         ftb_entry = self.ftbways[hit_way].ftb_entry
@@ -91,7 +92,7 @@ class uFTBModel:
                             if selected_way is None or way < selected_way:
                                 selected_way = way
                                 break
-                    # print(f"Hit selected way is {selected_way}")
+                    logger.debug(f"Hit selected way is {selected_way}")
 
                 new_update_queue.append((self.update_queue[i][0], self.update_queue[i][1] - 1, selected_way))
         self.update_queue = new_update_queue
@@ -107,7 +108,7 @@ class uFTBModel:
         if not update_request["valid"]:
             return
 
-        # print(f"ftb entry {hex(update_request['bits_pc'])} is put into way {selected_way}")
+        logger.debug(f"ftb entry {hex(update_request['bits_pc'])} is put into way {selected_way}")
         self.ftbways[selected_way].valid = 1
         self.ftbways[selected_way].tag = uFTBWay.get_tag(update_request["bits_pc"])
         self.ftbways[selected_way].ftb_entry = FTBEntry.from_dict(update_request["ftb_entry"])

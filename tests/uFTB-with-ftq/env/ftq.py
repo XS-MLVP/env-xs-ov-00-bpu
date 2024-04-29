@@ -1,3 +1,4 @@
+from mlvp import *
 from random import random
 from .bundle import *
 from .config import *
@@ -31,27 +32,30 @@ class PredictionStatistician:
             self.jmp_branches_list[pc] = [branch_type, 1, int(correct)]
 
     def summary(self):
-        print("=" * 30)
-        print("Summary")
-        print("[Conditional Branches]")
+        summary_str = ""
+        summary_str += "=" * 30 + "\n"
+        summary_str += "Summary\n"
+        summary_str += "[Conditional Branches]\n"
         cond_branches_total = sum([record[0] for record in self.cond_branches_list.values()])
         cond_branches_correct = sum([record[1] for record in self.cond_branches_list.values()])
-        print(f"Total: {cond_branches_total}, Correct: {cond_branches_correct}, Accuracy: {cond_branches_correct / cond_branches_total}")
+        summary_str += f"Total: {cond_branches_total}, Correct: {cond_branches_correct}, Accuracy: {cond_branches_correct / cond_branches_total}\n"
 
         for pc, record in self.cond_branches_list.items():
-            print(f"PC: {hex(pc)}\tTotal: {record[0]}\tCorrect: {record[1]}\tAccuracy: {record[1] / record[0]}")
+            summary_str += f"PC: {hex(pc)}\tTotal: {record[0]}\tCorrect: {record[1]}\tAccuracy: {record[1] / record[0]}\n"
 
-        print("[Jump Branches]")
+        summary_str += "[Jump Branches]\n"
         jmp_branches_total = sum([record[1] for record in self.jmp_branches_list.values()])
         jmp_branches_correct = sum([record[2] for record in self.jmp_branches_list.values()])
-        print(f"Total: {jmp_branches_total}, Correct: {jmp_branches_correct}, Accuracy: {jmp_branches_correct / jmp_branches_total}")
+        summary_str += f"Total: {jmp_branches_total}, Correct: {jmp_branches_correct}, Accuracy: {jmp_branches_correct / jmp_branches_total}\n"
         for pc, record in self.jmp_branches_list.items():
-            print(f"PC: {hex(pc)}\tType: {record[0]}\tTotal: {record[1]}\tCorrect: {record[2]}\tAccuracy: {record[2] / record[1]}")
+            summary_str += f"PC: {hex(pc)}\tType: {record[0]}\tTotal: {record[1]}\tCorrect: {record[2]}\tAccuracy: {record[2] / record[1]}\n"
 
-        print("[All Branches]")
+        summary_str += "[All Branches]\n"
         total = cond_branches_total + jmp_branches_total
         correct = cond_branches_correct + jmp_branches_correct
-        print(f"Total: {total}, Correct: {correct}, Accuracy: {correct / total}")
+        summary_str += f"Total: {total}, Correct: {correct}, Accuracy: {correct / total}\n"
+
+        logger.info(summary_str)
 
     @staticmethod
     def get_type(is_call, is_ret, is_jalr, is_jal):
@@ -104,13 +108,12 @@ class FTQ:
         update_request, redirect_request = None, None
         if self.update_queue:
             update_request = self._generate_update_request(self.update_queue.pop(0))
-            # print("Send Update Request: %s" % hex(update_request['bits_pc']), \
-            #       "br_taken_mask:", update_request["bits_br_taken_mask_0"], update_request["bits_br_taken_mask_1"])
-
+            logger.debug(f"Send Update Request: {hex(update_request['bits_pc'])}\
+                            br_taken_mask: {update_request['bits_br_taken_mask_0']}, {update_request['bits_br_taken_mask_1']}")
         if self.redirect_queue:
             cfi_target = self.redirect_queue.pop(0)
             redirect_request = self._generate_redirect_request(cfi_target)
-            # print("Send Redirect Request: (target: %s)" % hex(cfi_target))
+            logger.debug("Send Redirect Request: (target: %s)" % hex(cfi_target))
 
         return (update_request, redirect_request)
 
@@ -129,18 +132,18 @@ class FTQ:
         entry = self._get_entry(self.exec_ptr)
         executor_current_pc = self.executor.current_inst()[0]
         self.exec_ptr += 1
-        # print("Executing FTQ entry at pc %s" % hex(entry.pc))
+        logger.debug("Executing FTQ entry at pc %s" % hex(entry.pc))
 
         # Prediction Block Hit
         if entry.full_pred["hit"] and entry.pc == executor_current_pc:
-            # print("Prediction Block Hit")
+            logger.debug("Prediction Block Hit")
 
             # Execute the prediction block
             all_branches, redirect_addr, br_taken_mask = self._execute_this_pred_block(entry.pc, entry.full_pred)
-            # if redirect_addr is None:
-            #     print("Predicition is correct")
-            # else:
-            #     print("Prediction is wrong, redirect to %s" % hex(redirect_addr))
+            if redirect_addr is None:
+                logger.debug("Predicition is correct")
+            else:
+                logger.debug("Prediction is wrong, redirect to %s" % hex(redirect_addr))
             new_ftb_entry = self._update_ftb_entry_from_branches(entry.pc, entry.ftb, all_branches, br_taken_mask)
             self.update_queue.append((entry.pc, new_ftb_entry, br_taken_mask))
             if redirect_addr is not None:
@@ -148,9 +151,9 @@ class FTQ:
 
         # Prediction Block Miss
         else:
-            # print("Prediction Block Miss")
-            # if entry.pc != executor_current_pc:
-            #     print("Target Error: actual: %s expected: %s" % (hex(entry.pc), hex(executor_current_pc)))
+            logger.debug("Prediction Block Miss")
+            if entry.pc != executor_current_pc:
+                logger.debug("Target Error: actual: %s expected: %s" % (hex(entry.pc), hex(executor_current_pc)))
 
             # Create a new FTB entry and update & redirect
             new_ftb_entry, br_taken_mask = self._generate_new_ftb_entry(executor_current_pc)
@@ -288,14 +291,14 @@ class FTQ:
         ftb_entry.pftAddr = get_pftaddr(fallthrough_addr)
         ftb_entry.carry = get_pftaddr_carry(pc, fallthrough_addr)
 
-        # print("Generate FTB Entry")
-        # ftb_entry.print(pc)
+        logger.debug("Generate FTB Entry")
+        logger.debug(ftb_entry.__str__(pc))
 
         return ftb_entry, br_taken_mask
 
     def _update_entries(self, bpu_out, ftb_entry):
         if bpu_out["s1"]["valid"]:
-            # print("Add ftq entry (pc: %s)" % hex(bpu_out["s1"]["pc_3"]))
+            logger.debug("Add ftq entry (pc: %s)" % hex(bpu_out["s1"]["pc_3"]))
             entry = self._get_entry(self.bpu_ptr)
             entry.full_pred = bpu_out["s1"]["full_pred"]
             entry.pc = bpu_out["s1"]["pc_3"]

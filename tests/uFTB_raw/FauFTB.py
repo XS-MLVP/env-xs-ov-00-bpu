@@ -142,8 +142,8 @@ class FauFTB(DUTFauFTB):
                 ]
             )
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.io_in_bits_s0_pc = self.Io_in_bits_s0_pc(self)
         self.io_out_s1_pc = self.Io_out_s1_pc(self)
         self.io_s0_fire = self.Io_s0_fire(self)

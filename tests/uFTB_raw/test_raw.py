@@ -37,9 +37,7 @@ from mlvp.reporter import *
 
 def test_raw(request):
 
-    set_line_coverage(request, "VFauFTB_coverage.dat")
-
-    uFTB: FauFTB = FauFTB()
+    uFTB: FauFTB = FauFTB(waveform_filename="uftb_raw.fst", coverage_filename="uftb_raw_coverage.dat")
     ftb_entry_list()
     uFTB.reset.value = 1
     uFTB.Step(100)
@@ -57,6 +55,8 @@ def test_raw(request):
         uFTB.Step(1)
 
     uFTB.finalize()
+
+    set_line_coverage(request, "uftb_raw_coverage.dat")
 
 
 if __name__ == "__main__":

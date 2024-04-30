@@ -1,7 +1,5 @@
-TEST_MODULE=FauFTB
 TEST=.
 TEST_FOLDER=./$(TEST)
-COV_FILE_NAME=V$(TEST_MODULE)_coverage.dat
 
 PYTHON=python3
 
@@ -16,4 +14,4 @@ run:
 	@$(PYTHON) -c $(START_CODE)
 
 clean:
-	rm -rf report/ *.fst *.dat
+	rm -rf report/ *.fst *.dat *.log *.hier

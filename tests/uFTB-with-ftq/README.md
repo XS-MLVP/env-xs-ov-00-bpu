@@ -36,10 +36,10 @@ make uftb TL=python
 
 ### 仿真验证
 
-在本测试用例目录下执行
+在 `tests` 目录下执行
 
 ```shell
-python uftb-env/tb.py
+make TEST=uFTB-with-ftq run
 ```
 
 即可开始仿真验证。

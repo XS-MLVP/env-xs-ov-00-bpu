@@ -125,7 +125,11 @@ BRTParser 使我们专门为 BPU 验证所设计的能够自动抓取、解析�
 make TEST=uFTB_raw run
 ```
 
-该命令会自动运行 `uFTB_raw` 测试用例，并生成波形、覆盖率和测试报告等信息。测试报告会被保存在 `tests/report` 目录中，可通过浏览器打开 `tests/report/report.html` 查看本次测试报告内容，其余文件也会在 `tests` 目录下生成。
+该命令会自动运行 `uFTB_raw` 测试用例，并生成波形、覆盖率和测试报告等信息。测试报告会被保存在 `tests/report` 目录中，可通过浏览器打开 `tests/report/report.html` 查看本次测试报告内容，测试报告样式如下图所示，其余文件也会在 `tests` 目录下生成。
+
+<div style="text-align: center;">
+    <img src="../image/test-report.png" width="700">
+</div>
 
 若需要一次性运行所有测试用例，可以运行如下命令：
 
@@ -137,7 +141,7 @@ make run
 
 ### 添加测试用例
 
-在编写自己的测试用例时，只需要在 `tests` 目录下新建一个子目录以作为新测试用例的目录，子目录的名称命名为测试用例的名称。你可以在该目录下添加任意的代码文件，只需要保证测试用例的入口文件为 `test_xxx.py`，在该文件中，测试用例的入口函数也需要被命名为 `test_xxx`。你可以编写一个或多个入口文件和入口函数。
+在编写自己的测试用例时，只需要在 `tests` 目录下新建一个子目录以作为新测试用例的目录，子目录的名称命名为测试用例的名称。你可以在该目录下添加任意的代码文件，只需要保证测试用例的入口文件为 `test_<测试名称>.py`，在该文件中，测试用例的入口函数也需要被命名为 `test_<测试名称>`。你可以编写一个或多个入口文件和入口函数。
 
 在每个入口函数中，需要遵循如下的格式：
 
@@ -146,10 +150,10 @@ make run
 import mlvp.funcov as fc
 from mlvp.reporter import set_func_coverage, set_line_coverage
 
-def test_xxx(request):
+def test_mydut(request):
     # 创建 DUT，并指定本次测试的波形文件和覆盖率文件名称
     # 请注意，每个测试函数所对应的波形文件及覆盖率文件名称应该互不相同，否则会导致文件被覆盖
-    my_dut = DUTxxx(waveform_filename="my_test.fst", coverage_filename="my_test_coverage.dat")
+    my_dut = DUTMydut(waveform_filename="my_test.fst", coverage_filename="my_test_coverage.dat")
 
     # 指定功能覆盖规则
     g1 = fc.CovGroup("group1")
@@ -170,10 +174,16 @@ def test_xxx(request):
 测试用例编写完成后，可以直接在 `tests` 目录运行：
 
 ```python
-make TEST=xxx run
+make TEST=<测试用例名> run
 ```
 
 即可自动完成测试用例的运行、波形生成、覆盖率统计和测试报告生成等工作。
+
+当本地测试通过后，即可提交测试用例。提交时，测试报告中的测试结果需满足以下要求：
+
+1. 所有测试用例均通过
+2. 代码行覆盖率大于 95%
+3. 功能覆盖率达到 100%
 
 ### 日志输出
 

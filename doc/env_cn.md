@@ -1,19 +1,28 @@
 # BPU验证环境
 
-本环境提供BPU验证所需的所有依赖，以及工具包。本验证环境需要在linux系统下运行，它包含了如何生成带验证的Python DUT模块、验证示例、验证报告生成等模块。（待验证模块对应的香山仓库为：[github.com/OpenXiangShan/XiangShan](https://github.com/OpenXiangShan/XiangShan/tree/kunminghu)，commit为：[ea2f767c24941b08d375b2b9529cd11b5850960a](https://github.com/OpenXiangShan/XiangShan/tree/ea2f767c24941b08d375b2b9529cd11b5850960a)）
+本环境提供BPU验证所需的所有依赖，以及工具包。本验证环境需要在linux系统下运行，包含以下组件
+
+1. 生成待验证的 Python DUT 模块
+2. 对DUT进行验证的示例项目
+3. 生成验证报告的组件
+
+待验证项目：
+
+- 待验证模块：[XiangShan ea2f767](https://github.com/OpenXiangShan/XiangShan/tree/ea2f767c24941b08d375b2b9529cd11b5850960a)
 
 
 ## 安装依赖
 
-除去基本的gcc/python3开发环境外，本验仓库还依赖RTL仿真器 Verilator（4.218 ）、Picker工具、MLVP库。具体安装方法请参考以下链接。
+除去基本的gcc/python3开发环境外，本验仓库还依赖如下两个项目，请先行安装，**并安装对应项目的依赖**。
 
-1. [Verilator](https://www.veripool.org/projects/verilator/wiki/Installing)
-2. [Picker](https://github.com/XS-MLVP/picker)
-3. [mlvp](https://github.com/XS-MLVP/mlvp)
+1. [Picker](https://github.com/XS-MLVP/picker)
+2. [MLVP](https://github.com/XS-MLVP/mlvp)
 
-通过以下命令安装python依赖：
+再通过以下命令安装其他依赖：
 ```bash
-pip3 install XXXX XXXX XXXX
+apt install lcov # genhtml
+pip install pytest-sugar pytest-rerunfailures pytest-xdist pytest-assume pytest-html # pytest
+
 ```
 
 ## 生成待验证模块
@@ -76,18 +85,6 @@ if __name__ == "__main__":
 
 其他待验证模块，例如 TAGE-SC，FTB也可以通过类似命令生成。
 
-### Tage SC
-
-```bash
-make tage_sc TL=python
-```
-
-### FTB
-
-```bash
-make ftb TL=python
-```
-
 **支持的模块名称有：uftb、tage_sc、ftb、ras、ittage。也可以通过如下命令，一次性生成所有DUT模块。**
 
 ```bash
@@ -118,24 +115,26 @@ BRTParser 使我们专门为 BPU 验证所设计的能够自动抓取、解析�
 
 ### 编写TestCase
 
-TBD
+
 
 #### 创建测试函数
 
-本验证环境基于Pytest进行搭建，因此如何编写test请参考文档：XXXXX。在本示例中，编写了如下test：
+本验证环境基于Pytest进行搭建，因此如何编写test请参考[对应文档](https://open-verify.cc/mlvp/docs/quick-start/frameworks/pytest/)。
+
+在本示例中，编写了如下test：
 
 ```bash
-xxxx/test_xxx.py
+
 ```
 
 #### 发送激励
 
-TDB
+
 
 #### 运行测试
 
-TBD
+
 
 #### 生成测试报告
 
-TBD
+

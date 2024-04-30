@@ -60,16 +60,3 @@ QQ群
 import base64
 base64.b64decode('Your_Base64_Data_Here').decode()
 ```
-
-微信群
-```python
-import base64
-from io import BytesIO
-from PIL import Image
-base64_image_data = \
-"Your_Base64_Image_Data_Here_0"\
-"Your_Base64_Image_Data_Here_1"
-image_data = base64.b64decode(base64_image_data)
-image = Image.open(BytesIO(image_data))
-image.show()
-```

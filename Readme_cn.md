@@ -37,15 +37,22 @@
 
 ```bash
 .
-├── LICENSE          # 开源协议
-├── Makefile         # 注makefile
-├── Readme.md        # 英文readme
-├── Readme_cn.md     # 中文readme
 ├── doc              # 仓库文档
 ├── image            # 文档图片
-├── mk               # 子makefile
-├── out              # dut生成目录
-└── src              # dut源代码
+├── LICENSE          # 开源协议
+├── Makefile         # Makefile
+├── mk               # 子 Makefile
+├── Readme_cn.md     # 中文 Readme
+├── Readme.md        # 英文 Readme
+├── tests            # 测试用例    <- 在此目录添加测试用例
+│   ├── Makefile        # 测试用例 Makefile
+│   ├── conftest.py     # 测试用例配置
+│   ├── README.md       # 测试用例说明
+│   ├── uFTB_raw        # 测试用例1：uFTB_raw
+│   └── uftb-with-ftq   # 测试用例2：uftb-with-ftq
+└── utils            # 实用工具
+    ├── BRTParser       # 分支预测结果解析工具
+    └── ready-to-run    # 可供在模拟器中执行的程序
 ```
 
 **注：由于本项目是以PR的方式提交结果，所以请务必按照上述目录要求进行数据组织**

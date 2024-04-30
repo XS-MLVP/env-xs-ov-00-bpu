@@ -5,7 +5,7 @@ from .uftb_model import uFTBModel
 
 def assert_equal(a, b):
     if a != b:
-        logger.error(f"[Error] Expected is {a}, but actual is {b}")
+        error(f"[Error] Expected is {a}, but actual is {b}")
         exit(1)
 
 def compare_uftb_full_pred(uftb_output, std_output):
@@ -148,27 +148,27 @@ class BPUTop:
             else:
                 self.s1_hit_way = None
 
-            logger.debug("-" * 30)
+            debug("-" * 30)
             if self.s1_fire:
                 # Debug Imformation
-                logger.debug("[BPU]")
-                logger.debug(f"New prediction at {hex(self.s1_pc)}")
+                debug("[BPU]")
+                debug(f"New prediction at {hex(self.s1_pc)}")
                 if bpu_output["s1"]["full_pred"]["hit"]:
-                    logger.debug("Dut Hit")
+                    debug("Dut Hit")
 
-                logger.debug("FTB Entry in pred result: ")
+                debug("FTB Entry in pred result: ")
                 if bpu_output["s1"]["full_pred"]["hit"]:
-                    logger.debug(ftb_entry.__str__(self.s1_pc))
+                    debug(ftb_entry.__str__(self.s1_pc))
                 else:
-                    logger.debug("No FTB Entry")
-                logger.debug(f"br_taken_mask: {bpu_output['s1']['full_pred']['br_taken_mask_0']}, {bpu_output['s1']['full_pred']['br_taken_mask_1']}")
+                    debug("No FTB Entry")
+                debug(f"br_taken_mask: {bpu_output['s1']['full_pred']['br_taken_mask_0']}, {bpu_output['s1']['full_pred']['br_taken_mask_1']}")
 
-                logger.debug("FTB Entry in uFTB Model: ")
+                debug("FTB Entry in uFTB Model: ")
                 if model_output:
-                    logger.debug(model_output[0].__str__(self.s1_pc))
-                    logger.debug(f"br_taken_mask: {model_output[1]}")
+                    debug(model_output[0].__str__(self.s1_pc))
+                    debug(f"br_taken_mask: {model_output[1]}")
                 else:
-                    logger.debug("No FTB Entry")
+                    debug("No FTB Entry")
 
                 # Compare dut output and uFTB model output
                 expected_hit = model_output is not None

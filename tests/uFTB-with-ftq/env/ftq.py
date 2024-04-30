@@ -55,7 +55,7 @@ class PredictionStatistician:
         correct = cond_branches_correct + jmp_branches_correct
         summary_str += f"Total: {total}, Correct: {correct}, Accuracy: {correct / total}\n"
 
-        logger.info(summary_str)
+        info(summary_str)
 
     @staticmethod
     def get_type(is_call, is_ret, is_jalr, is_jal):
@@ -108,12 +108,12 @@ class FTQ:
         update_request, redirect_request = None, None
         if self.update_queue:
             update_request = self._generate_update_request(self.update_queue.pop(0))
-            logger.debug(f"Send Update Request: {hex(update_request['bits_pc'])}\
+            debug(f"Send Update Request: {hex(update_request['bits_pc'])}\
                             br_taken_mask: {update_request['bits_br_taken_mask_0']}, {update_request['bits_br_taken_mask_1']}")
         if self.redirect_queue:
             cfi_target = self.redirect_queue.pop(0)
             redirect_request = self._generate_redirect_request(cfi_target)
-            logger.debug("Send Redirect Request: (target: %s)" % hex(cfi_target))
+            debug("Send Redirect Request: (target: %s)" % hex(cfi_target))
 
         return (update_request, redirect_request)
 
@@ -132,18 +132,18 @@ class FTQ:
         entry = self._get_entry(self.exec_ptr)
         executor_current_pc = self.executor.current_inst()[0]
         self.exec_ptr += 1
-        logger.debug("Executing FTQ entry at pc %s" % hex(entry.pc))
+        debug("Executing FTQ entry at pc %s" % hex(entry.pc))
 
         # Prediction Block Hit
         if entry.full_pred["hit"] and entry.pc == executor_current_pc:
-            logger.debug("Prediction Block Hit")
+            debug("Prediction Block Hit")
 
             # Execute the prediction block
             all_branches, redirect_addr, br_taken_mask = self._execute_this_pred_block(entry.pc, entry.full_pred)
             if redirect_addr is None:
-                logger.debug("Predicition is correct")
+                debug("Predicition is correct")
             else:
-                logger.debug("Prediction is wrong, redirect to %s" % hex(redirect_addr))
+                debug("Prediction is wrong, redirect to %s" % hex(redirect_addr))
             new_ftb_entry = self._update_ftb_entry_from_branches(entry.pc, entry.ftb, all_branches, br_taken_mask)
             self.update_queue.append((entry.pc, new_ftb_entry, br_taken_mask))
             if redirect_addr is not None:
@@ -151,9 +151,9 @@ class FTQ:
 
         # Prediction Block Miss
         else:
-            logger.debug("Prediction Block Miss")
+            debug("Prediction Block Miss")
             if entry.pc != executor_current_pc:
-                logger.debug("Target Error: actual: %s expected: %s" % (hex(entry.pc), hex(executor_current_pc)))
+                debug("Target Error: actual: %s expected: %s" % (hex(entry.pc), hex(executor_current_pc)))
 
             # Create a new FTB entry and update & redirect
             new_ftb_entry, br_taken_mask = self._generate_new_ftb_entry(executor_current_pc)
@@ -291,14 +291,14 @@ class FTQ:
         ftb_entry.pftAddr = get_pftaddr(fallthrough_addr)
         ftb_entry.carry = get_pftaddr_carry(pc, fallthrough_addr)
 
-        logger.debug("Generate FTB Entry")
-        logger.debug(ftb_entry.__str__(pc))
+        debug("Generate FTB Entry")
+        debug(ftb_entry.__str__(pc))
 
         return ftb_entry, br_taken_mask
 
     def _update_entries(self, bpu_out, ftb_entry):
         if bpu_out["s1"]["valid"]:
-            logger.debug("Add ftq entry (pc: %s)" % hex(bpu_out["s1"]["pc_3"]))
+            debug("Add ftq entry (pc: %s)" % hex(bpu_out["s1"]["pc_3"]))
             entry = self._get_entry(self.bpu_ptr)
             entry.full_pred = bpu_out["s1"]["full_pred"]
             entry.pc = bpu_out["s1"]["pc_3"]

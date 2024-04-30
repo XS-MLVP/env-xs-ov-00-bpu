@@ -192,17 +192,21 @@ make TEST=<测试用例名> run
 具体地，你可以使用如下的方式来记录日志：
 
 ```python
-from mlvp import logger
+import mlvp
 
-logger.debug("This is a debug message", extra={"log_id": "dut"})
-logger.info("This is an info message")
-logger.warning("This is a warning message", extra={"log_id": "interface"})
-logger.error("This is an error message")
-logger.critical("This is a critical message")
+mlvp.debug("This is a debug message", extra={"log_id": "dut"})
+mlvp.info("This is an info message")
+mlvp.warning("This is a warning message", extra={"log_id": "interface"})
+mlvp.error("This is an error message")
+mlvp.critical("This is a critical message")
 ```
 
 如果需要改变日志记录格式、日志级别以及写入文件等信息，可通过调用 `mlvp` 库中的 `setup_logging` 函数进行设置：
 
 ```python
-def setup_logging(log_level=logging.INFO, format=default_format, log_file=None)
+def setup_logging(
+    log_level =logging.INFO,
+    format=default_format,
+    console_display=True,
+    log_file=None)
 ```

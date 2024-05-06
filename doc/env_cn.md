@@ -31,7 +31,7 @@ pip install pytest-sugar pytest-rerunfailures pytest-xdist pytest-assume pytest-
 
 ```bash
 git clone https://github.com/XS-MLVP/env-xs-ov-00-bpu.git
-cd env-xs-ov-00-bpu.git
+cd env-xs-ov-00-bpu
 ```
 
 ### 生成 uFTB

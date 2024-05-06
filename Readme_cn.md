@@ -66,10 +66,4 @@ https://www.example.com
 
 ## 加入讨论群
 
-为了防止群内广告泛滥，请运行以下Python代码获取群号:
-
-QQ群
-```python
-import base64
-base64.b64decode('Your_Base64_Data_Here').decode()
-```
+![600480230](./image/600480230.jpg)

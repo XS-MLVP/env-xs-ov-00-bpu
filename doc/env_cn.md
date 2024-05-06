@@ -196,7 +196,7 @@ import mlvp
 
 mlvp.debug("This is a debug message", extra={"log_id": "dut"})
 mlvp.info("This is an info message")
-mlvp.warning("This is a warning message", extra={"log_id": "interface"})
+mlvp.warning("This is a warning message", extra={"log_id": "bundle"})
 mlvp.error("This is an error message")
 mlvp.critical("This is a critical message")
 ```

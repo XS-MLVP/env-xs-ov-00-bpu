@@ -6,7 +6,7 @@
 
 参与验证的流程如下图所示：
 
-<img src="./image/ov-pipline.svg" width="800px">
+<img src="/.github/image/ov-pipline.svg" width="800px">
 
 #### （0）在线报名
 

@@ -8,8 +8,6 @@
 
 **开源开放验证官网：[open-verify.cc](https://open-verify.cc)**
 
-**Gitlink活动地址：[https://www.gitlink.org.cn/glcc/2023/subjects/detail/473](https://www.gitlink.org.cn/glcc/2023/subjects/detail/473)**
-
 
 ## 简介
 
@@ -23,7 +21,7 @@
 
 芯片验证是芯片设计工作中的重点，跳过验证或者验证的不够，会导致流片失败或者芯片产品不达标，带来巨大损失。芯片设计公司把芯片设计当成核心商业机密，而芯片验证通常需要基于芯片设计源代码，因此芯片验证工作只能在公司内部进行。开源香山高性能risc-v芯片不存在“商业机密泄露”等问题，因此可以把芯片验证工作以类似软件分包、众包的方式进行分发，让感兴趣的人远程参与。
 
-## 相关文档
+## 学习材料
 
 1. **[基础学习材料](https://open-verify.cc/mlvp/docs/)**，学习什么是芯片验证，如何使用Python进行验证。
 1. **[香山BPU介绍](https://open-verify.cc/xs-bpu/docs/)**，学习什么是分支预测，香山处理器中采用了哪些基础预测器。
@@ -63,6 +61,6 @@
 
 [报名问卷](https://iz9a87wn37.feishu.cn/share/base/form/shrcnwpiyWaVUzyo47QdPBGy5Yd)
 
-## 加入讨论群
+## 加入讨QQ论群: 600480230
 
-![600480230](./image/600480230.jpg)
+<image src="/.github/image/600480230.jpg" alter="600480230" width=500px />

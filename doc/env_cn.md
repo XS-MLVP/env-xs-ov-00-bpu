@@ -15,8 +15,8 @@
 
 除去基本的gcc/python3开发环境外，本验仓库还依赖如下两个项目，请先行安装，**并安装对应项目的依赖**。
 
-1. [Picker](https://github.com/XS-MLVP/picker)
-2. [MLVP](https://github.com/XS-MLVP/mlvp)
+1. [picker](https://github.com/XS-MLVP/picker)
+2. [mlvp](https://github.com/XS-MLVP/mlvp)
 
 再通过以下命令安装其他依赖：
 ```bash
@@ -128,7 +128,7 @@ make TEST=uFTB_raw run
 该命令会自动运行 `uFTB_raw` 测试用例，并生成波形、覆盖率和测试报告等信息。测试报告会被保存在 `tests/report` 目录中，可通过浏览器打开 `tests/report/report.html` 查看本次测试报告内容，测试报告样式如下图所示，其余文件也会在 `tests` 目录下生成。
 
 <div style="text-align: center;">
-    <img src="./image/test-report.png" width="700">
+    <img src="/.github/image/test-report.png" width="700">
 </div>
 
 若需要一次性运行所有测试用例，可以运行如下命令：

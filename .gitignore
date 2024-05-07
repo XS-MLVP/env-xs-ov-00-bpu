@@ -2,6 +2,7 @@ out
 split_verilogs
 .vscode
 **/__pycache__/
+**.pytest_cache/
 *.fst
 *.fst.hier
 *.log

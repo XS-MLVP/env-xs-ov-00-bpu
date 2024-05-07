@@ -41,7 +41,7 @@ from mlvp.reporter import *
 
 def test_uftb(request):
     # Create DUT
-    uFTB = DUTFauFTB(waveform_filename="uftb_with_ftq.fst", coverage_filename="uftb_with_ftq_coverage.dat")
+    uFTB = DUTFauFTB(waveform_filename="report/uftb_with_ftq.fst", coverage_filename="report/uftb_with_ftq_coverage.dat")
     uFTB.init_clock("clock")
     set_imm_mode(uFTB)
 
@@ -67,10 +67,10 @@ def test_uftb(request):
     uFTB.xclock.StepRis(lambda _: g2.sample())
 
     # Run the test
-    mlvp.setup_logging(log_level=logging.INFO, log_file="uftb_with_ftq.log")
+    mlvp.setup_logging(log_level=logging.INFO, log_file="report/uftb_with_ftq.log")
     mlvp.run(uftb_test(uFTB))
     uFTB.finalize()
 
     pred_stat.summary()
     set_func_coverage(request, [g1, g2])
-    set_line_coverage(request, "uftb_with_ftq_coverage.dat")
+    set_line_coverage(request, "report/uftb_with_ftq_coverage.dat")

@@ -61,8 +61,7 @@
 
 请访问以下链接报名参与本活动：
 
-https://www.example.com
-
+[报名问卷](https://iz9a87wn37.feishu.cn/share/base/form/shrcnwpiyWaVUzyo47QdPBGy5Yd)
 
 ## 加入讨论群
 

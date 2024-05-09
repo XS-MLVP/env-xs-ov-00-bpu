@@ -55,7 +55,7 @@
   `endif // not def ENABLE_INITIAL_MEM_
 `endif // not def SYNTHESIS
 
-module SRAMTemplate_39(	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
+module SRAMTemplate_43(	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
   input         clock,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
   input         reset,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
   input         io_r_req_valid,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
@@ -64,25 +64,35 @@ module SRAMTemplate_39(	// @[utility/src/main/scala/utility/SRAMTemplate.scala:1
   output [8:0]  io_r_resp_data_0_tag,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
   output [1:0]  io_r_resp_data_0_ctr,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
   output [40:0] io_r_resp_data_0_target,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
+  output        io_r_resp_data_1_valid,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
+  output [8:0]  io_r_resp_data_1_tag,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
+  output [1:0]  io_r_resp_data_1_ctr,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
+  output [40:0] io_r_resp_data_1_target,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
   input         io_w_req_valid,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
   input  [6:0]  io_w_req_bits_setIdx,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
   input  [8:0]  io_w_req_bits_data_0_tag,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
   input  [1:0]  io_w_req_bits_data_0_ctr,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
-  input  [40:0] io_w_req_bits_data_0_target	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
+  input  [40:0] io_w_req_bits_data_0_target,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
+  input  [8:0]  io_w_req_bits_data_1_tag,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
+  input  [1:0]  io_w_req_bits_data_1_ctr,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
+  input  [40:0] io_w_req_bits_data_1_target,	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
+  input  [1:0]  io_w_req_bits_waymask	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14]
 );
 
-  wire [6:0]  setIdx;	// @[utility/src/main/scala/utility/SRAMTemplate.scala:174:19]
-  wire        realRen;	// @[utility/src/main/scala/utility/SRAMTemplate.scala:172:38]
-  wire        wen;	// @[utility/src/main/scala/utility/SRAMTemplate.scala:171:52]
-  wire [52:0] _array_0_RW0_rdata;	// @[utility/src/main/scala/utility/SRAMTemplate.scala:154:26]
-  reg         _resetState;	// @[utility/src/main/scala/utility/SRAMTemplate.scala:158:30]
-  reg  [6:0]  _resetSet;	// @[src/main/scala/chisel3/util/Counter.scala:61:40]
+  wire [6:0]   setIdx;	// @[utility/src/main/scala/utility/SRAMTemplate.scala:174:19]
+  wire         realRen;	// @[utility/src/main/scala/utility/SRAMTemplate.scala:172:38]
+  wire         wen;	// @[utility/src/main/scala/utility/SRAMTemplate.scala:171:52]
+  wire [105:0] _array_RW0_rdata;	// @[utility/src/main/scala/utility/SRAMTemplate.scala:154:26]
+  reg          _resetState;	// @[utility/src/main/scala/utility/SRAMTemplate.scala:158:30]
+  reg  [6:0]   _resetSet;	// @[src/main/scala/chisel3/util/Counter.scala:61:40]
   assign wen = io_w_req_valid | _resetState;	// @[utility/src/main/scala/utility/SRAMTemplate.scala:158:30, :171:52]
   assign realRen = io_r_req_valid & ~wen;	// @[utility/src/main/scala/utility/SRAMTemplate.scala:171:52, :172:{38,41}]
   assign setIdx = _resetState ? _resetSet : io_w_req_bits_setIdx;	// @[src/main/scala/chisel3/util/Counter.scala:61:40, utility/src/main/scala/utility/SRAMTemplate.scala:158:30, :174:19]
-  reg         rdata_last_r;	// @[utility/src/main/scala/utility/ClockGatedReg.scala:25:22]
-  reg  [52:0] rdata_hold_data_0;	// @[utility/src/main/scala/utility/Hold.scala:24:82]
-  wire [52:0] _rdata_T_0 = rdata_last_r ? _array_0_RW0_rdata : rdata_hold_data_0;	// @[utility/src/main/scala/utility/ClockGatedReg.scala:25:22, utility/src/main/scala/utility/Hold.scala:24:82, :25:8, utility/src/main/scala/utility/SRAMTemplate.scala:154:26]
+  reg          rdata_last_r;	// @[utility/src/main/scala/utility/ClockGatedReg.scala:25:22]
+  reg  [52:0]  rdata_hold_data_0;	// @[utility/src/main/scala/utility/Hold.scala:24:82]
+  reg  [52:0]  rdata_hold_data_1;	// @[utility/src/main/scala/utility/Hold.scala:24:82]
+  wire [52:0]  _rdata_T_0 = rdata_last_r ? _array_RW0_rdata[52:0] : rdata_hold_data_0;	// @[utility/src/main/scala/utility/ClockGatedReg.scala:25:22, utility/src/main/scala/utility/Hold.scala:24:82, :25:8, utility/src/main/scala/utility/SRAMTemplate.scala:154:26, :192:69]
+  wire [52:0]  _rdata_T_1 = rdata_last_r ? _array_RW0_rdata[105:53] : rdata_hold_data_1;	// @[utility/src/main/scala/utility/ClockGatedReg.scala:25:22, utility/src/main/scala/utility/Hold.scala:24:82, :25:8, utility/src/main/scala/utility/SRAMTemplate.scala:154:26, :192:69]
   always @(posedge clock or posedge reset) begin	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
     if (reset) begin	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
       _resetState <= 1'h1;	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14, :158:30]
@@ -98,26 +108,29 @@ module SRAMTemplate_39(	// @[utility/src/main/scala/utility/SRAMTemplate.scala:1
     end
   end // always @(posedge, posedge)
   always @(posedge clock) begin	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
-    if (rdata_last_r)	// @[utility/src/main/scala/utility/ClockGatedReg.scala:25:22]
-      rdata_hold_data_0 <= _array_0_RW0_rdata;	// @[utility/src/main/scala/utility/Hold.scala:24:82, utility/src/main/scala/utility/SRAMTemplate.scala:154:26]
+    if (rdata_last_r) begin	// @[utility/src/main/scala/utility/ClockGatedReg.scala:25:22]
+      rdata_hold_data_0 <= _array_RW0_rdata[52:0];	// @[utility/src/main/scala/utility/Hold.scala:24:82, utility/src/main/scala/utility/SRAMTemplate.scala:154:26, :192:69]
+      rdata_hold_data_1 <= _array_RW0_rdata[105:53];	// @[utility/src/main/scala/utility/Hold.scala:24:82, utility/src/main/scala/utility/SRAMTemplate.scala:154:26, :192:69]
+    end
   end // always @(posedge)
   `ifdef ENABLE_INITIAL_REG_	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
     `ifdef FIRRTL_BEFORE_INITIAL	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
       `FIRRTL_BEFORE_INITIAL	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
     `endif // FIRRTL_BEFORE_INITIAL
-    logic [31:0] _RANDOM[0:4];	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
+    logic [31:0] _RANDOM[0:8];	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
     initial begin	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
       `ifdef INIT_RANDOM_PROLOG_	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
         `INIT_RANDOM_PROLOG_	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
       `endif // INIT_RANDOM_PROLOG_
       `ifdef RANDOMIZE_REG_INIT	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
-        for (logic [2:0] i = 3'h0; i < 3'h5; i += 3'h1) begin
+        for (logic [3:0] i = 4'h0; i < 4'h9; i += 4'h1) begin
           _RANDOM[i] = `RANDOM;	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
         end	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
-        _resetState = _RANDOM[3'h0][0];	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7, :158:30]
-        _resetSet = _RANDOM[3'h0][7:1];	// @[src/main/scala/chisel3/util/Counter.scala:61:40, utility/src/main/scala/utility/SRAMTemplate.scala:138:7, :158:30]
-        rdata_last_r = _RANDOM[3'h2][24];	// @[utility/src/main/scala/utility/ClockGatedReg.scala:25:22, utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
-        rdata_hold_data_0 = {_RANDOM[3'h2][31:25], _RANDOM[3'h3], _RANDOM[3'h4][13:0]};	// @[utility/src/main/scala/utility/ClockGatedReg.scala:25:22, utility/src/main/scala/utility/Hold.scala:24:82, utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
+        _resetState = _RANDOM[4'h0][0];	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7, :158:30]
+        _resetSet = _RANDOM[4'h0][7:1];	// @[src/main/scala/chisel3/util/Counter.scala:61:40, utility/src/main/scala/utility/SRAMTemplate.scala:138:7, :158:30]
+        rdata_last_r = _RANDOM[4'h4][25];	// @[utility/src/main/scala/utility/ClockGatedReg.scala:25:22, utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
+        rdata_hold_data_0 = {_RANDOM[4'h4][31:26], _RANDOM[4'h5], _RANDOM[4'h6][14:0]};	// @[utility/src/main/scala/utility/ClockGatedReg.scala:25:22, utility/src/main/scala/utility/Hold.scala:24:82, utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
+        rdata_hold_data_1 = {_RANDOM[4'h6][31:15], _RANDOM[4'h7], _RANDOM[4'h8][3:0]};	// @[utility/src/main/scala/utility/Hold.scala:24:82, utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
       `endif // RANDOMIZE_REG_INIT
       if (reset) begin	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
         _resetState = 1'h1;	// @[utility/src/main/scala/utility/SRAMTemplate.scala:144:14, :158:30]
@@ -129,21 +142,30 @@ module SRAMTemplate_39(	// @[utility/src/main/scala/utility/SRAMTemplate.scala:1
       `FIRRTL_AFTER_INITIAL	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7]
     `endif // FIRRTL_AFTER_INITIAL
   `endif // ENABLE_INITIAL_REG_
-  array_0_0 array_0 (	// @[utility/src/main/scala/utility/SRAMTemplate.scala:154:26]
+  array_8 array (	// @[utility/src/main/scala/utility/SRAMTemplate.scala:154:26]
     .RW0_addr  (wen ? setIdx : io_r_req_bits_setIdx),	// @[utility/src/main/scala/utility/SRAMTemplate.scala:154:26, :171:52, :174:19]
     .RW0_en    (realRen | wen),	// @[utility/src/main/scala/utility/SRAMTemplate.scala:154:26, :171:52, :172:38]
     .RW0_clk   (clock),
     .RW0_wmode (wen),	// @[utility/src/main/scala/utility/SRAMTemplate.scala:171:52]
     .RW0_wdata
       ({~_resetState,
+        _resetState ? 9'h0 : io_w_req_bits_data_1_tag,
+        _resetState ? 2'h0 : io_w_req_bits_data_1_ctr,
+        _resetState ? 41'h0 : io_w_req_bits_data_1_target,
+        ~_resetState,
         _resetState ? 9'h0 : io_w_req_bits_data_0_tag,
         _resetState ? 2'h0 : io_w_req_bits_data_0_ctr,
         _resetState ? 41'h0 : io_w_req_bits_data_0_target}),	// @[utility/src/main/scala/utility/SRAMTemplate.scala:138:7, :144:14, :158:30, :175:{18,43}, :176:13]
-    .RW0_rdata (_array_0_RW0_rdata)
+    .RW0_rdata (_array_RW0_rdata),
+    .RW0_wmask (_resetState ? 2'h3 : io_w_req_bits_waymask)	// @[utility/src/main/scala/utility/SRAMTemplate.scala:158:30, :180:{22,39}]
   );
   assign io_r_resp_data_0_valid = _rdata_T_0[52];	// @[utility/src/main/scala/utility/Hold.scala:25:8, utility/src/main/scala/utility/SRAMTemplate.scala:138:7, :219:45]
   assign io_r_resp_data_0_tag = _rdata_T_0[51:43];	// @[utility/src/main/scala/utility/Hold.scala:25:8, utility/src/main/scala/utility/SRAMTemplate.scala:138:7, :219:45]
   assign io_r_resp_data_0_ctr = _rdata_T_0[42:41];	// @[utility/src/main/scala/utility/Hold.scala:25:8, utility/src/main/scala/utility/SRAMTemplate.scala:138:7, :219:45]
   assign io_r_resp_data_0_target = _rdata_T_0[40:0];	// @[utility/src/main/scala/utility/Hold.scala:25:8, utility/src/main/scala/utility/SRAMTemplate.scala:138:7, :219:45]
+  assign io_r_resp_data_1_valid = _rdata_T_1[52];	// @[utility/src/main/scala/utility/Hold.scala:25:8, utility/src/main/scala/utility/SRAMTemplate.scala:138:7, :219:45]
+  assign io_r_resp_data_1_tag = _rdata_T_1[51:43];	// @[utility/src/main/scala/utility/Hold.scala:25:8, utility/src/main/scala/utility/SRAMTemplate.scala:138:7, :219:45]
+  assign io_r_resp_data_1_ctr = _rdata_T_1[42:41];	// @[utility/src/main/scala/utility/Hold.scala:25:8, utility/src/main/scala/utility/SRAMTemplate.scala:138:7, :219:45]
+  assign io_r_resp_data_1_target = _rdata_T_1[40:0];	// @[utility/src/main/scala/utility/Hold.scala:25:8, utility/src/main/scala/utility/SRAMTemplate.scala:138:7, :219:45]
 endmodule
 

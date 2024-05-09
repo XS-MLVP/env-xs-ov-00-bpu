@@ -10,8 +10,8 @@
 ./rtl/ITTAGE/ITTageTable_2.sv
 ./rtl/ITTAGE/ITTageTable_3.sv
 ./rtl/ITTAGE/ITTageTable_4.sv
-./rtl/ITTAGE/SRAMTemplate_35.sv
 ./rtl/ITTAGE/SRAMTemplate_39.sv
+./rtl/ITTAGE/SRAMTemplate_43.sv
 ./rtl/ITTAGE/WrBypass_41.sv
 ./rtl/ITTAGE/WrBypass_43.sv
 ./rtl/ITTAGE/array_0_0.sv

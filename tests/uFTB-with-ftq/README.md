@@ -8,7 +8,9 @@
 
 ![env](README.assets/env.png)
 
+<span style="color:red;">
 对于香山 BPU 中其他子预测器的验证，可复用本项目中的真实指令执行环境，但需要对 DUT 的接口、时序以及需要使用的预测结果通道等进行适配。
+</span>
 
 ## 快速使用
 

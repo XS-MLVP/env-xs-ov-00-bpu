@@ -29,6 +29,16 @@ Chip validation is a crucial aspect of chip design work. Skipping or insufficien
 
 1. [Building Verification Environment](/doc/env_cn.md): Learn how to set up the basic verification environment, how to validate, and submit validation results.
 
+**<font color="blue">To accelerate the verification process, the verification environment has provided the following reusable features:</font>**
+<font color="blue">
+- Python DUT: Python module corresponding to each module to be verified
+- FakeFTQ: A general interface for driving BPU, providing operations such as redirect and update
+- BPU Trace: Branch jump data of real applications
+- Pytest environment: Drive tests through pytest, generate test reports, provide code line coverage, and function coverage support
+
+For details, please refer to the test Demo: [uFTB-raw](/tests/uFTB-raw/README.md), [uFTB-with-ftq](/tests/uFTB-with-ftq/README.md)
+</font>
+
 ## Repository Directory
 The structure of this repository directory and corresponding explanations are as follows:
 

@@ -23,10 +23,21 @@
 
 ## 学习材料
 
-1. **[基础学习材料](https://open-verify.cc/mlvp/docs/)**，学习什么是芯片验证，如何使用Python进行验证。
-1. **[香山BPU介绍](https://open-verify.cc/xs-bpu/docs/)**，学习什么是分支预测，香山处理器中采用了哪些基础预测器。
-1. **[如何参与本活动](/doc/join_cn.md)**，介绍如何参与本活动，有哪些活动规则。
-1. **[构建验证环境](/doc/env_cn.md)**，介绍基本验证环境搭建，如何进行验证和提交验证结果。
+1. **[基础学习材料](https://open-verify.cc/mlvp/docs/)**，学习什么是芯片验证，如何使用Python进行验证
+1. **[香山BPU介绍](https://open-verify.cc/xs-bpu/docs/)**，学习什么是分支预测，香山处理器中采用了哪些基础预测器
+1. **[如何参与本活动](/doc/join_cn.md)**，介绍如何参与本活动，有哪些活动规则
+1. **[构建验证环境](/doc/env_cn.md)**，介绍基本验证环境搭建，如何进行验证和提交验证结果
+
+
+**<font color="blue">为了加速验证过程，验证环境已经提供了如下可复用功能：</font>**
+<font color="blue">
+- Python DUT：各待验证模块对应的python module
+- FakeFTQ：用于驱动BPU的通用接口，提供redirect、update等操作
+- BPU Trace：真实应用的分支跳转数据
+- Pytest环境：通过pytest驱动测试，生成测试报告，提供代码行覆盖率，功能覆盖率支持
+
+具体请参考测试 Demo: [uFTB-raw](/tests/uFTB-raw/README.md)、[uFTB-with-ftq](/tests/uFTB-with-ftq/README.md)
+</font>
 
 
 ## 本仓库目录

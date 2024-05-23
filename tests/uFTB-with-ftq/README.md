@@ -48,6 +48,11 @@ make TEST=uFTB-with-ftq run
 
 若要更改需要执行的程序，可在 `config.py` 中更改相应变量的值，仿真所需的真实程序已经放置仓库 `utils/ready-to-run` 目录下。若要更改仿真所持续的周期数，可在 `config.py` 中更改 `MAX_CYCLE` 的值。
 
+如果需要启用随机trace，可以设置环境变量 RANDOM_BPT=1
+```shell
+RANDOM_BPT=1 make TEST=uFTB-with-ftq run
+```
+
 ## 使用说明
 
 ### 目录结构

@@ -3,13 +3,16 @@ from .config import *
 import os
 os.sys.path.append(UTILS_PATH)
 
-from BRTParser import BRTParser
+from BRTParser import BRTParser, RandomBPTTrace
 
 class Executor:
     """Get program real execution instruction flow."""
 
     def __init__(self, filename, reset_vector=0x80000000):
-        self._executor = BRTParser().fetch(filename)
+        if str(os.getenv("RANDOM_BPT")).lower() in ["1", "true"]:
+            self._executor = RandomBPTTrace().gen(start_address=reset_vector, pc_range_size=100_000)
+        else:
+            self._executor = BRTParser().fetch(filename)
         self._current_branch = next(self._executor)
         self._current_pc = reset_vector
 

@@ -38,7 +38,7 @@ class PredictionStatistician:
         summary_str += "[Conditional Branches]\n"
         cond_branches_total = sum([record[0] for record in self.cond_branches_list.values()])
         cond_branches_correct = sum([record[1] for record in self.cond_branches_list.values()])
-        summary_str += f"Total: {cond_branches_total}, Correct: {cond_branches_correct}, Accuracy: {cond_branches_correct / cond_branches_total}\n"
+        summary_str += f"Total: {cond_branches_total}, Correct: {cond_branches_correct}, Accuracy: {cond_branches_correct / max(1,cond_branches_total)}\n"
 
         for pc, record in self.cond_branches_list.items():
             summary_str += f"PC: {hex(pc)}\tTotal: {record[0]}\tCorrect: {record[1]}\tAccuracy: {record[1] / record[0]}\n"
@@ -46,14 +46,14 @@ class PredictionStatistician:
         summary_str += "[Jump Branches]\n"
         jmp_branches_total = sum([record[1] for record in self.jmp_branches_list.values()])
         jmp_branches_correct = sum([record[2] for record in self.jmp_branches_list.values()])
-        summary_str += f"Total: {jmp_branches_total}, Correct: {jmp_branches_correct}, Accuracy: {jmp_branches_correct / jmp_branches_total}\n"
+        summary_str += f"Total: {jmp_branches_total}, Correct: {jmp_branches_correct}, Accuracy: {jmp_branches_correct / max(1,jmp_branches_total)}\n"
         for pc, record in self.jmp_branches_list.items():
-            summary_str += f"PC: {hex(pc)}\tType: {record[0]}\tTotal: {record[1]}\tCorrect: {record[2]}\tAccuracy: {record[2] / record[1]}\n"
+            summary_str += f"PC: {hex(pc)}\tType: {record[0]}\tTotal: {record[1]}\tCorrect: {record[2]}\tAccuracy: {record[2] / max(1,record[1])}\n"
 
         summary_str += "[All Branches]\n"
         total = cond_branches_total + jmp_branches_total
         correct = cond_branches_correct + jmp_branches_correct
-        summary_str += f"Total: {total}, Correct: {correct}, Accuracy: {correct / total}\n"
+        summary_str += f"Total: {total}, Correct: {correct}, Accuracy: {correct /max(1, total)}\n"
 
         info(summary_str)
 

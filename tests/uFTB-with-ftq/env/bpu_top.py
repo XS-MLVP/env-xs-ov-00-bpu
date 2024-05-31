@@ -136,7 +136,7 @@ class BPUTop:
 
 
             # Get dut output and generate bpu output
-            dut_output = self.dut_out.collect()
+            dut_output = self.dut_out.as_dict()
             bpu_output = self.generate_bpu_output(dut_output)
 
             ftb_entry = FTBEntry.from_full_pred_dict(self.s1_pc, dut_output["s1"]["full_pred"])

@@ -24,10 +24,10 @@ def set_imm_mode(uFTB):
 
 
 async def uftb_test(uFTB):
-    uFTB_update = UpdateBundle.from_prefix(uFTB, "io_update_")
-    uFTB_out = BranchPredictionResp.from_prefix(uFTB, "io_out_")
-    pipeline_ctrl = PipelineCtrlBundle.from_prefix(uFTB, "io_")
-    enable_ctrl = EnableCtrlBundle.from_prefix(uFTB, "io_ctrl_")
+    uFTB_update = UpdateBundle.from_prefix("io_update_").set_name("uFTB_update").bind(uFTB)
+    uFTB_out = BranchPredictionResp.from_prefix("io_out_").set_name("uFTB_out").bind(uFTB)
+    pipeline_ctrl = PipelineCtrlBundle.from_prefix("io_").set_name("pipeline_ctrl").bind(uFTB)
+    enable_ctrl = EnableCtrlBundle.from_prefix("io_ctrl_").set_name("enable_ctrl").bind(uFTB)
 
     mlvp.create_task(mlvp.start_clock(uFTB))
     mlvp.create_task(BPUTop(uFTB, uFTB_out, uFTB_update, pipeline_ctrl, enable_ctrl).run())
@@ -74,3 +74,4 @@ def test_uftb(request):
     pred_stat.summary()
     set_func_coverage(request, [g1, g2])
     set_line_coverage(request, "report/uftb_with_ftq_coverage.dat")
+

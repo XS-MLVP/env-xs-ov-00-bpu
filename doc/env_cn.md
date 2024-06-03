@@ -8,7 +8,7 @@
 
 待验证项目：
 
-- 待验证模块：[XiangShan ea2f767](https://github.com/OpenXiangShan/XiangShan/tree/545d7be08861a078dc54ccc114bf1792e894ab54)
+- 待验证模块：[XiangShan 545d7b](https://github.com/OpenXiangShan/XiangShan/tree/545d7be08861a078dc54ccc114bf1792e894ab54)
 
 
 ## 安装依赖

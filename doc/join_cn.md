@@ -40,21 +40,25 @@ Fork本仓库，然后在本地进行环境搭建，参与测试任务。
 
 可以通过PR随时进行bug提交，但是一天组织方只对一个队伍进行一次bug审查。组织方根据bug类型，等级发放对应积分。
 
-#### （8）编写测试文档
+#### （8）编写测试报告
 
-参考模板 [todo](todo://todo) 进行对应文档编写。
+参考模板 [NutShell Cache](https://open-verify.cc/mlvp/docs/basic/report/) 进行编写。
 
 #### （9）PPT在线答辩
 
 编写PPT在线进行对整个验证任务的答辩。答辩根据给队伍的完成情况集中组织。
 
-## 任务
+## 基础任务
 
-### 任务1. uFTB
+### 任务1. uFTB & TFB
 
 源代码地址: [FauFTB.sv](https://github.com/XS-MLVP/env-xs-ov-00-bpu/tree/main/rtl/uFTB)
 功能描述文档：[uFTB分支预测器](https://open-verify.cc/xs-bpu/docs/modules/01_uftb/)
 参考功能点文档：[uFTB功能列表](https://open-verify.cc/xs-bpu/docs/feature/01_uftbfeature/)
+
+源代码地址: [FTB.sv](https://github.com/XS-MLVP/env-xs-ov-00-bpu/tree/main/rtl/FTB)
+功能描述文档：[FTB 分支预测器](https://open-verify.cc/xs-bpu/docs/modules/03_ftb/)
+参考功能点文档：[FTB 功能列表](https://open-verify.cc/xs-bpu/docs/feature/02_ftbfeature/)
 
 1. 完成对 uFTB 子预测器的代码及文档阅读，了解 uFTB 的工作原理及模块功能。明确 uFTB 使用的 FTB 项缓存的结构。
 2. 根据给出的参考功能点，完善 uFTB 需要验证的功能点，并针对这些功能点分解出具体的测试点。同时解释每个测试点对验证功能点的意义。
@@ -76,20 +80,7 @@ Fork本仓库，然后在本地进行环境搭建，参与测试任务。
 5. 完成对 TageSC 的测试用例的运行，生成测试报告。测试报告需要包括测试用例的运行结果、代码行覆盖率、功能覆盖率等信息。测试报告需要保存在 `tests/report` 目录中，可通过浏览器打开 `tests/report/TageSC-yourId.html` 查看本次测试报告内容。
 6. 最终提交前，需要对测试报告进行检查，确保测试报告符合提交PR的基本要求。
 
-### 任务3. FTB
-
-源代码地址: [FTB.sv](https://github.com/XS-MLVP/env-xs-ov-00-bpu/tree/main/rtl/FTB)
-功能描述文档：[FTB 分支预测器](https://open-verify.cc/xs-bpu/docs/modules/03_ftb/)
-参考功能点文档：[FTB 功能列表](https://open-verify.cc/xs-bpu/docs/feature/02_ftbfeature/)
-
-1. 完成对 FTB 子预测器的代码及文档阅读，了解 FTB 的工作原理及模块功能。明确 FTB 使用的 FTB 项缓存的结构，了解条件分支指令和间接跳转指令的不同。
-2. 根据给出的参考功能点，完善 FTB 需要验证的功能点，并针对这些功能点分解出具体的测试点。同时解释每个测试点对验证功能点的意义。
-3. 依据分解出的测试点，完成对 FTB 的测试用例编写。测试用例需要覆盖到所有的测试点。同时，需要对测试用例进行详细的说明，包括测试用例的目的、输入、输出、预期结果及原理等。
-4. 完成对 FTB 的测试用例的代码编写，建议完成**参考模型的编写**。确保测试用例能够通过验证环境的运行。在编码的过程中，需要保证代码的质量，包括代码的可读性、可维护性、可扩展性等。
-5. 完成对 FTB 的测试用例的运行，生成测试报告。测试报告需要包括测试用例的运行结果、代码行覆盖率、功能覆盖率等信息。测试报告需要保存在 `tests/report` 目录中，可通过浏览器打开 `tests/report/FTB-yourId.html` 查看本次测试报告内容。
-6. 最终提交前，需要对测试报告进行检查，确保测试报告符合提交PR的基本要求。
-
-### 任务4. ITTAGE
+### 任务3. ITTAGE
 
 源代码地址: [ITTAGE.sv](https://github.com/XS-MLVP/env-xs-ov-00-bpu/tree/main/rtl/ITTAGE)
 功能描述文档：[ITTAGE 分支预测器](https://open-verify.cc/xs-bpu/docs/modules/04_ittage/)
@@ -103,7 +94,7 @@ Fork本仓库，然后在本地进行环境搭建，参与测试任务。
 6. 最终提交前，需要对测试报告进行检查，确保测试报告符合提交PR的基本要求。
 
 
-### 任务5. RAS
+### 任务4. RAS
 
 源代码地址: [RAS.sv](https://github.com/XS-MLVP/env-xs-ov-00-bpu/tree/main/rtl/RAS)
 功能描述文档：[RAS 分支预测器](https://open-verify.cc/xs-bpu/docs/modules/05_ras/)
@@ -116,7 +107,7 @@ Fork本仓库，然后在本地进行环境搭建，参与测试任务。
 5. 完成对 RAS 的测试用例的运行，生成测试报告。测试报告需要包括测试用例的运行结果、代码行覆盖率、功能覆盖率等信息。测试报告需要保存在 `tests/report` 目录中，可通过浏览器打开 `tests/report/RAS-yourId.html` 查看本次测试报告内容。
 6. 最终提交前，需要对测试报告进行检查，确保测试报告符合提交PR的基本要求。
 
-### 任务6. BPU Top
+### 任务5. BPU Top
 
 源代码地址: [Predictor.sv & Composer.sv](https://github.com/XS-MLVP/env-xs-ov-00-bpu/tree/main/rtl/common)
 功能描述文档：[BPU 顶层模块](https://open-verify.cc/xs-bpu/docs/modules/00_bpu_top/)

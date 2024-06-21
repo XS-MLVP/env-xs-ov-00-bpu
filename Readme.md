@@ -4,7 +4,7 @@
 
 This project aims to explore open-sourced subdivision verification of the high-performance open-source RISC-V OpenXiangshan processor's microarchitecture. It introduces new tools and methods based on Python, enabling all students interested in chip design and verification to quickly grasp and study the XiangShan microarchitecture. This phase provides a detailed introduction to the principles and implementation of the branch prediction module of the XiangShan Kunminghu architecture, along with the corresponding open-source verification environment. Participants in this phase can earn points and rewards by submitting bugs, writing verification reports, and more.
 
-**The Open Verification Porject website：[open-verify.cc](https://open-verify.cc)**
+**The Open Verification Porject website：[open-verify.cc](https://open-verify.cc/en/)**
 
 
 ## Introduction
@@ -21,13 +21,13 @@ Chip validation is a crucial aspect of chip design work. Skipping or insufficien
 
 ## Learning resources
 
-1. [Basic Learning Materials](https://open-verify.cc/mlvp/docs/): Learn about chip validation and how to use Python for validation.
+1. [Basic Learning Materials](https://open-verify.cc/mlvp/en/docs/): Learn about chip validation and how to use Python for validation.
 
-1. [Introduction to Shanhai BPU](https://open-verify.cc/xs-bpu/docs/): Learn about branch prediction and the basic predictors used in the Shanhai processor.
+1. [Introduction to Shanhai BPU](https://open-verify.cc/xs-bpu/en/docs/): Learn about branch prediction and the basic predictors used in the Shanhai processor.
 
-1. [How to Participate in This Activity](/doc/join_cn.md): Learn how to participate in this activity and the rules.
+1. [How to Participate in This Activity](/doc/join_en.md): Learn how to participate in this activity and the rules.
 
-1. [Building Verification Environment](/doc/env_cn.md): Learn how to set up the basic verification environment, how to validate, and submit validation results.
+1. [Building Verification Environment](/doc/env_en.md): Learn how to set up the basic verification environment, how to validate, and submit validation results.
 
 **<font color="blue">To accelerate the verification process, the verification environment has provided the following reusable features:</font>**
 <font color="blue">

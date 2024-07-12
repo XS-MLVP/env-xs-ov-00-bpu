@@ -15,7 +15,7 @@ endif
 _EXAMPLE ?=
 # if VERBOSE is set, then _VERBOSE is set to -v
 ifneq ($(VERBOSE), false)
-	_VERBOSE := -v
+	_VERBOSE := --verbose
 endif
 _VERBOSE ?=
 # if WAVE is set, then _WAVEFORM is set to -w
@@ -40,6 +40,6 @@ ftb:
 
 	@mkdir -p out
 	rm -rf ${TARGET} 
-	picker ${TOP_ENTRY} -f ${TOP_FILES} -l ${TL} -c\
-		 -t ${TARGET} ${_WAVEFORM}${_EXAMPLE} ${_VERBOSE}
+	picker export ${TOP_ENTRY} --fs ${TOP_FILES} --lang ${TL} -c\
+		--tdir ${TARGET} ${_WAVEFORM}${_EXAMPLE} ${_VERBOSE}
 

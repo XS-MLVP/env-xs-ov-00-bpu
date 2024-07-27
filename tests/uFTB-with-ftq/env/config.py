@@ -1,5 +1,5 @@
 PROGRAM_NAME = "microbench.bin"
-MAX_CYCLE = 10000
+MAX_CYCLE = 20000
 
 import os
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__)) + "/../../.."

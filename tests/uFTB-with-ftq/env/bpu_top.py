@@ -16,13 +16,14 @@ def compare_uftb_full_pred(uftb_output, std_output):
         assert_equal(uftb_output[key], std_output[key])
 
 class BPUTop:
-    def __init__(self, dut, dut_out: BranchPredictionResp, dut_update: UpdateBundle, pipeline_ctrl: PipelineCtrlBundle, enable_ctrl: EnableCtrlBundle):
+    def __init__(self, dut, dut_out: BranchPredictionResp, dut_update: UpdateBundle, pipeline_ctrl: PipelineCtrlBundle, enable_ctrl: EnableCtrlBundle, io_in: IoInBundle):
         self.dut = dut
 
         self.dut_out = dut_out
         self.dut_update = dut_update
         self.pipeline_ctrl = pipeline_ctrl
         self.enable_ctrl = enable_ctrl
+        self.io_in = io_in
 
         self.s0_fire = 0
         self.s1_fire = 0
@@ -47,19 +48,41 @@ class BPUTop:
         self.pipeline_ctrl.s0_fire_3.value = self.s0_fire
 
         self.pipeline_ctrl.s1_fire_0.value = self.s1_fire
-        self.pipeline_ctrl.s1_fire_1.value = self.s1_fire
-        self.pipeline_ctrl.s1_fire_2.value = self.s1_fire
-        self.pipeline_ctrl.s1_fire_3.value = self.s1_fire
+        # self.pipeline_ctrl.s1_fire_1.value = self.s1_fire
+        # self.pipeline_ctrl.s1_fire_2.value = self.s1_fire
+        # self.pipeline_ctrl.s1_fire_3.value = self.s1_fire
 
         self.pipeline_ctrl.s2_fire_0.value = self.s2_fire
-        self.pipeline_ctrl.s2_fire_1.value = self.s2_fire
-        self.pipeline_ctrl.s2_fire_2.value = self.s2_fire
-        self.pipeline_ctrl.s2_fire_3.value = self.s2_fire
+        # self.pipeline_ctrl.s2_fire_1.value = self.s2_fire
+        # self.pipeline_ctrl.s2_fire_2.value = self.s2_fire
+        # self.pipeline_ctrl.s2_fire_3.value = self.s2_fire
 
-        self.pipeline_ctrl.s3_fire_0.value = self.s3_fire
-        self.pipeline_ctrl.s3_fire_1.value = self.s3_fire
-        self.pipeline_ctrl.s3_fire_2.value = self.s3_fire
-        self.pipeline_ctrl.s3_fire_3.value = self.s3_fire
+        # self.pipeline_ctrl.s3_fire_0.value = self.s3_fire
+        # self.pipeline_ctrl.s3_fire_1.value = self.s3_fire
+        # self.pipeline_ctrl.s3_fire_2.value = self.s3_fire
+        # self.pipeline_ctrl.s3_fire_3.value = self.s3_fire
+
+        # print(self.pipeline_ctrl.s1_fire_0.value, self.s3_fire)
+
+        assert_equal(self.pipeline_ctrl.s0_fire_0.value, self.s0_fire)
+        assert_equal(self.pipeline_ctrl.s0_fire_1.value, self.s0_fire)
+        assert_equal(self.pipeline_ctrl.s0_fire_2.value, self.s0_fire)
+        assert_equal(self.pipeline_ctrl.s0_fire_3.value, self.s0_fire)
+
+        assert_equal(self.pipeline_ctrl.s1_fire_0.value, self.s1_fire)
+        # assert_equal(self.pipeline_ctrl.s1_fire_1.value, self.s1_fire)
+        # assert_equal(self.pipeline_ctrl.s1_fire_2.value, self.s1_fire)
+        # assert_equal(self.pipeline_ctrl.s1_fire_3.value, self.s1_fire)
+
+        assert_equal(self.pipeline_ctrl.s2_fire_0.value, self.s2_fire)
+        # assert_equal(self.pipeline_ctrl.s2_fire_1.value, self.s2_fire)
+        # assert_equal(self.pipeline_ctrl.s2_fire_2.value, self.s2_fire)
+        # assert_equal(self.pipeline_ctrl.s2_fire_3.value, self.s2_fire)
+
+        # assert_equal(self.pipeline_ctrl.s3_fire_0.value, self.s3_fire)
+        # assert_equal(self.pipeline_ctrl.s3_fire_1.value, self.s3_fire)
+        # assert_equal(self.pipeline_ctrl.s3_fire_2.value, self.s3_fire)
+        # assert_equal(self.pipeline_ctrl.s3_fire_3.value, self.s3_fire)
 
         # Set the value to 1 forcibly to obtain meta information
         self.dut.io_s1_fire_0.value = 1
@@ -75,7 +98,11 @@ class BPUTop:
         dut_output["s2"]["valid"] = self.s2_fire
         dut_output["s3"]["valid"] = self.s3_fire
 
+        dut_output["s2"]["pc_1"] = self.s2_pc
+        dut_output["s2"]["pc_2"] = self.s2_pc
         dut_output["s2"]["pc_3"] = self.s2_pc
+        dut_output["s3"]["pc_1"] = self.s3_pc
+        dut_output["s3"]["pc_2"] = self.s3_pc
         dut_output["s3"]["pc_3"] = self.s3_pc
 
         # Provide Basic FTB Prediction
@@ -138,6 +165,12 @@ class BPUTop:
             # Get dut output and generate bpu output
             dut_output = self.dut_out.as_dict()
             bpu_output = self.generate_bpu_output(dut_output)
+            # test input
+            dut_input = self.io_in.as_dict()
+            assert_equal(dut_input["bits_s0_pc_0"], self.s0_pc)
+            assert_equal(dut_input["bits_s0_pc_1"], self.s0_pc)
+            assert_equal(dut_input["bits_s0_pc_2"], self.s0_pc)
+            assert_equal(dut_input["bits_s0_pc_3"], self.s0_pc)
 
             ftb_entry = FTBEntry.from_full_pred_dict(self.s1_pc, dut_output["s1"]["full_pred"])
             model_output = self.uftb_model.generate_output(self.s1_fire, self.s1_pc)
@@ -194,10 +227,10 @@ class BPUTop:
 
             ## Update Request
             if update_request:
+                self.dut_update.valid.value = 1
                 self.uftb_model.update(update_request)
                 self.ftb_provider.update(update_request)
                 self.dut_update.assign(update_request)
-                self.dut_update.valid.value = 1
             else:
                 self.dut_update.valid.value = 0
 

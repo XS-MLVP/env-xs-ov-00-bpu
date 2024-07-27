@@ -7,7 +7,10 @@ class PipelineCtrlBundle(Bundle):
                "s3_fire_0", "s3_fire_1", "s3_fire_2", "s3_fire_3",
                "s1_ready", "s2_ready", "s3_ready",
                "s2_redirect", "s3_redirect"]
-
+    
+class IoInBundle(Bundle):
+    signals = ["bits_s0_pc_0", "bits_s0_pc_1", "bits_s0_pc_2", "bits_s0_pc_3"]
+    
 class EnableCtrlBundle(Bundle):
     signals = ["ubtb_enable", "btb_enable", "bim_enable", "tage_enable",
                "sc_enable", "ras_enable", "loop_enable"]
@@ -35,7 +38,7 @@ class FullBranchPredirectionBundle(Bundle):
                "jalr_target"]
 
 class BranchPredictionBundle(Bundle):
-    signals = ["pc_3", "valid", "hasRedirect", "ftq_idx"]
+    signals = ["pc_0", "pc_1", "pc_2", "pc_3", "valid", "hasRedirect", "ftq_idx"]
 
     def __init__(self):
         super().__init__()

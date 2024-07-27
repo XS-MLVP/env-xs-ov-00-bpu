@@ -1,6 +1,6 @@
 from mlvp.modules import PLRU, TwoBitsCounter
 from mlvp import *
-from .ftb import *
+from .ftb_way import *
 
 class uFTBWay:
     def __init__(self):
@@ -74,7 +74,9 @@ class uFTBModel:
                 if selected_way is None:
                     selected_way = self.replacer.get()
                 next_cycle_update_item.append((self.update_queue[i][0], selected_way))
-                self.update_queue[i] = (self.update_queue[i][0], self.update_queue[i][1], selected_way)
+                self.update_queue[i] = (self.update_queue[i][0], 
+                                        self.update_queue[i][1], 
+                                        selected_way)
                 self.replacer_update_queue[1].insert(0, (selected_way, 0))
 
         # Update request processing
@@ -94,7 +96,9 @@ class uFTBModel:
                                 break
                     debug(f"Hit selected way is {selected_way}")
 
-                new_update_queue.append((self.update_queue[i][0], self.update_queue[i][1] - 1, selected_way))
+                new_update_queue.append((self.update_queue[i][0], 
+                                         self.update_queue[i][1] - 1, 
+                                         selected_way))
         self.update_queue = new_update_queue
 
     def _find_hit_way(self, pc):

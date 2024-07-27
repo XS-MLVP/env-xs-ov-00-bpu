@@ -4,7 +4,7 @@ from .bundle import *
 from .config import *
 from .utils import *
 from .executor import Executor
-from .ftb import *
+from .ftb_way import *
 
 class PredictionStatistician:
     """Predictive condition statistician for branch instructions"""

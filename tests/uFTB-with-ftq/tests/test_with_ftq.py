@@ -28,9 +28,10 @@ async def uftb_test(uFTB):
     uFTB_out = BranchPredictionResp.from_prefix("io_out_").set_name("uFTB_out").bind(uFTB)
     pipeline_ctrl = PipelineCtrlBundle.from_prefix("io_").set_name("pipeline_ctrl").bind(uFTB)
     enable_ctrl = EnableCtrlBundle.from_prefix("io_ctrl_").set_name("enable_ctrl").bind(uFTB)
+    io_in = IoInBundle.from_prefix("io_in_").set_name("io_in").bind(uFTB)
 
     mlvp.create_task(mlvp.start_clock(uFTB))
-    mlvp.create_task(BPUTop(uFTB, uFTB_out, uFTB_update, pipeline_ctrl, enable_ctrl).run())
+    mlvp.create_task(BPUTop(uFTB, uFTB_out, uFTB_update, pipeline_ctrl, enable_ctrl, io_in).run())
 
     await ClockCycles(uFTB, MAX_CYCLE)
 
@@ -43,6 +44,7 @@ def test_uftb(request):
     # Create DUT
     uFTB = DUTFauFTB(waveform_filename="report/uftb_with_ftq.fst", coverage_filename="report/uftb_with_ftq_coverage.dat")
     uFTB.init_clock("clock")
+    print(uFTB.clock)
     set_imm_mode(uFTB)
 
     # Set Coverage
@@ -63,8 +65,13 @@ def test_uftb(request):
     g2.add_watch_point(uFTB.io_out_s1_full_pred_0_br_taken_mask_1, { "br_taken_mask_1": fc.Eq(1), "br_taken_mask_1_invalid": fc.Eq(0) }, name="s1_full_pred_0_br_taken_mask_1")
     g2.add_watch_point(uFTB.io_out_s1_full_pred_0_is_br_sharing, { "is_br_sharing": fc.Eq(1), "is_br_sharing_invalid": fc.Eq(0) }, name="s1_full_pred_0_is_br_sharing")
 
+    g3 = fc.CovGroup("ftb_slot")
+    g3.add_watch_point(uFTB.io_update_bits_ftb_entry_brSlots_0_tarStat, { "hit_2": fc.Eq(2), "hit_1": fc.Eq(1), "hit_0": fc.Eq(0) }, name="brSlots_0_tarStat_hit")
+    g3.add_watch_point(uFTB.io_update_bits_ftb_entry_tailSlot_tarStat, { "hit_2": fc.Eq(2), "hit_1": fc.Eq(1), "hit_0": fc.Eq(0) }, name="tailSlot_tarStat_hit")
+
     uFTB.xclock.StepRis(lambda _: g1.sample())
     uFTB.xclock.StepRis(lambda _: g2.sample())
+    uFTB.xclock.StepRis(lambda _: g3.sample())
 
     # Run the test
     mlvp.setup_logging(log_level=logging.INFO, log_file="report/uftb_with_ftq.log")
@@ -72,6 +79,6 @@ def test_uftb(request):
     uFTB.finalize()
 
     pred_stat.summary()
-    set_func_coverage(request, [g1, g2])
+    set_func_coverage(request, [g1, g2, g3])
     set_line_coverage(request, "report/uftb_with_ftq_coverage.dat")
 

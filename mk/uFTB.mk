@@ -1,5 +1,6 @@
 TOP_ENTRY := ./rtl/uFTB/FauFTB.sv
 TOP_FILES := ./rtl/uFTB.txt
+YAML_FILE := ./mk/FauFTB.yaml
 TL ?= cpp
 
 ifneq ($(TARGET),)
@@ -42,4 +43,5 @@ uftb:
 	rm -rf ${TARGET} 
 	picker export ${TOP_ENTRY} --fs ${TOP_FILES} --lang ${TL} -c\
 		--tdir ${TARGET} ${_WAVEFORM}${_EXAMPLE} ${_VERBOSE}
+# --internal ${YAML_FILE}
 		

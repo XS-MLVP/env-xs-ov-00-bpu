@@ -71,12 +71,12 @@ class FTBSet:
 class FTBBank:
     def __init__(self):
         self.ftbsets = [FTBSet() for _ in range(FTB_BANK_SETS_NUM)]
-        self.update_hits = None
+        # self.update_hits = None
         self.update_access = None
         # self.update_write_alloc = None
 
         self.update_queue = []
-        # self.replacer_update_queue = [[], []]
+        self.replacer_update_queue = [[], []]
 
     def find_set_from_idx(self, idx):
         for i in range(FTB_BANK_SETS_NUM):
@@ -87,44 +87,60 @@ class FTBBank:
     def update(self, update_request):
         idx = FTBSet.get_idx(update_request["bits_pc"])
         pc = FTBWay.get_tag(update_request["bits_pc"])
-        debug(f"update request [{idx}] {hex(pc)}")
+        debug(f"Update request [{idx}] {hex(pc)}")
         self.update_queue.append((update_request, 2, None, None))
     
-    def generate_output(self, s2_fire, s2_pc): 
+    def generate_output(self, s0_fire, s1_fire, s2_fire, s2_pc): 
         # debug(FTBSet.get_idx(s2_pc))
-        debug(f"generate output [{FTBSet.get_idx(s2_pc)}] {hex(FTBWay.get_tag(s2_pc))}")
-        # debug(self)
+        debug(f"Generate output [{FTBSet.get_idx(s2_pc)}] {hex(FTBWay.get_tag(s2_pc))}")
+        debug(self)
 
         # self.process_update()
 
-        if not s2_fire:
-            return None, None
+        if s0_fire:
+            # debug(f"s2_fire is off")
+            read_resp, read_hits = self.process_read(s2_pc)
 
-        read_resp, read_hits = self.process_read(s2_pc)
-        if read_hits is None:
-            return None
-        # self.replacer_update_queue[0].append((s2_pc, read_hits, 2))
-        self._update_replacer(FTBSet.get_idx(s2_pc), read_hits)
+        if s1_fire or s2_fire:
+            if read_hits is None:
+                return None
+            else:
+                return read_resp, read_hits
+
         # br_taken_mask = self._generate_br_taken_mask(s2_pc, read_hits)
+        return None
 
-        return read_resp, read_hits
-    
     def process_read(self, req_pc):
         # lookup idx and tag
         idx = FTBSet.get_idx(req_pc)
         tag = FTBWay.get_tag(req_pc)
 
         # find FTBWay
-        way = self.ftbsets[idx].find_way_from_tag(tag)
-        if way is None:
+        read_hits = self.ftbsets[idx].find_way_from_tag(tag)
+        if read_hits is None:
             return None, None
 
         # return read_resp(the target FTBway) and read_hits(Which way is hit)
-        read_resp = self.ftbsets[idx].ftbways[way].ftb_entry
-        read_hits = way
+        read_resp = self.ftbsets[idx].ftbways[read_hits].ftb_entry
+
+        self.replacer_update_queue[0].append((idx, read_hits, 2))
+        # self._update_replacer(idx, read_hits)
+
         return read_resp, read_hits
 
     def process_update(self):
+        for i in range(2):
+            new_replacer_update_queue = []
+            for j in range(len(self.replacer_update_queue[i])):
+                if self.replacer_update_queue[i][j][2] == 0:
+                    self._update_replacer(self.replacer_update_queue[i][j][0],
+                                          self.replacer_update_queue[i][j][1])
+                else:
+                    new_replacer_update_queue.append((self.replacer_update_queue[i][j][0], 
+                                             self.replacer_update_queue[i][j][1],
+                                             self.replacer_update_queue[i][j][2] - 1))
+            self.replacer_update_queue[i] = new_replacer_update_queue
+
         new_update_queue = []
         for (update_request, clock_cycle, way, update_write_alloc) in self.update_queue:
             pc = update_request["bits_pc"]
@@ -149,6 +165,7 @@ class FTBBank:
             elif clock_cycle == 2:
                 debug(f"[{FTBSet.get_idx(pc)}] {hex(FTBWay.get_tag(pc))} stage 0")
                 meta = parse_uftb_meta(update_request["bits_meta"])
+                
                 # debug(meta)
                 if meta["hit"]:
                     self._update_ways(FTBSet.get_idx(update_request["bits_pc"]), 
@@ -157,12 +174,12 @@ class FTBBank:
                                       update_request["ftb_entry"])
                     self.update_access = False
                 else:
-                    self._update_read(update_request["bits_pc"])
-                    self.update_access = True
+                    update_hits = self._update_read(update_request["bits_pc"])
                     new_update_queue.append((update_request, 
                                              clock_cycle - 1, 
-                                             self.update_hits,
+                                             update_hits,
                                              update_write_alloc))
+                    self.update_access = True
                 
         self.update_queue = new_update_queue
         
@@ -173,14 +190,14 @@ class FTBBank:
         way_index = self.ftbsets[idx].find_way_from_tag(tag)
         if way_index is not None:
             # hit
-            self.update_hits = way_index
+            return way_index
         else:
             # miss
-            self.update_hits = None
+            return None
         
     def _update_write(self, update_request, update_write_way, update_write_alloc: bool):
         pc = FTBWay.get_tag(update_request["bits_pc"])
-        # debug(f"write request {hex(pc)}")
+        # debug(f"Write request {hex(pc)}")
         if not update_request["valid"]:
             return
                 
@@ -194,6 +211,7 @@ class FTBBank:
             else:
                 # LRU
                 replace_way = self.ftbsets[idx].replacer.get()
+                debug(f"Swap out [{idx}] [{replace_way}]")
                 self._update_ways(idx, replace_way, update_request["bits_pc"], update_request["ftb_entry"])
         elif update_request["ftb_entry"] is not None:
             self._update_ways(idx, update_write_way, update_request["bits_pc"], update_request["ftb_entry"])
@@ -208,15 +226,18 @@ class FTBBank:
         self.ftbsets[idx].ftbways[way].ftb_entry = FTBEntry.from_dict(update_write_data)
         self.ftbsets[idx].ftbways[way].valid = 1
         self.ftbsets[idx].ftbways[way].tag = FTBWay.get_tag(pc)
-        self._update_replacer(idx, way)
+        self.replacer_update_queue[1].insert(0, (idx,
+                                                 way, 
+                                                 0))
         debug(f"{hex(FTBWay.get_tag(pc))} is put to [{idx}] [{way}]")
 
     def _update_replacer(self, idx, way):
+        debug(f"Update replacer [{idx}] [{way}]")
         self.ftbsets[idx].replacer.update(way)
 
     def __str__(self) -> str:
         str = ""
-        for i in range(len(self.ftbsets)):
+        for i in range(22, 22 + 1):
             for j in range(len(self.ftbsets[i].ftbways)):
                 if self.ftbsets[i].ftbways[j].valid:
                     str += "\n"

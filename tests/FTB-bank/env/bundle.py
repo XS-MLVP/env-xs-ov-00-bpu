@@ -34,7 +34,7 @@ class FTBEntryBundle(Bundle):
                "carry", 
                "isCall", "isRet", "isJalr", 
                "last_may_be_rvi_call",
-               "always_taken_0", "always_taken_1"]
+               "always_taken_0", "always_taken_1"] 
 
 class UpdateBundle(Bundle):
     signals = ["valid", "bits_pc", "bits_old_entry", "bits_meta"]
@@ -52,7 +52,7 @@ class FullBranchPredirectionBundle(Bundle):
                "jalr_target"]
 
 class BranchPredictionBundle(Bundle):
-    signals = ["pc_0", "pc_1", "pc_2", "pc_3", "valid", "hasRedirect", "ftq_idx"]
+    signals = ["pc_0", "pc_1", "pc_2", "pc_3", "hasRedirect", "ftq_idx"]
 
     def __init__(self):
         super().__init__()

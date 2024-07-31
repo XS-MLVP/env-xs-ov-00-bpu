@@ -1,4 +1,4 @@
-PROGRAM_NAME = "linux-0xa0000.bin"
+PROGRAM_NAME = "microbench.bin"
 MAX_CYCLE = 20000
 
 import os

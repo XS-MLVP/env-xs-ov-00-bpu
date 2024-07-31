@@ -55,13 +55,13 @@ def test_ftb(request):
     g1.add_watch_point(FTB.io_update_valid, { "update_valid": fc.Eq(1), }, name="update_valid")
 
     g2 = fc.CovGroup("ftb_entry")
-    g2.add_watch_point(FTB.io_out_s2_full_pred_0_hit, { "hit": fc.Eq(1), "not_hit": fc.Eq(0) }, name="s1_full_pred_0_hit")
-    g2.add_watch_point(FTB.io_out_s2_full_pred_3_fallThroughErr, { "fallThroughErr": fc.Eq(1), "not_fallThroughErr": fc.Eq(0) }, name="s1_full_pred_3_fallThroughErr")
-    g2.add_watch_point(FTB.io_out_s2_full_pred_0_slot_valids_0, { "slot_valids_0": fc.Eq(1), "slot_valids_0_invalid": fc.Eq(0) }, name="s1_full_pred_0_slot_valids_0")
-    g2.add_watch_point(FTB.io_out_s2_full_pred_0_slot_valids_1, { "slot_valids_1": fc.Eq(1), "slot_valids_1_invalid": fc.Eq(0) }, name="s1_full_pred_0_slot_valids_1")
-    g2.add_watch_point(FTB.io_out_s2_full_pred_0_br_taken_mask_0, { "br_taken_mask_0": fc.Eq(1), "br_taken_mask_0_invalid": fc.Eq(0) }, name="s1_full_pred_0_br_taken_mask_0")
-    g2.add_watch_point(FTB.io_out_s2_full_pred_0_br_taken_mask_1, { "br_taken_mask_1": fc.Eq(1), "br_taken_mask_1_invalid": fc.Eq(0) }, name="s1_full_pred_0_br_taken_mask_1")
-    g2.add_watch_point(FTB.io_out_s2_full_pred_0_is_br_sharing, { "is_br_sharing": fc.Eq(1), "is_br_sharing_invalid": fc.Eq(0) }, name="s1_full_pred_0_is_br_sharing")
+    g2.add_watch_point(FTB.io_out_s2_full_pred_3_hit, { "hit": fc.Eq(1), "not_hit": fc.Eq(0) }, name="s2_full_pred_0_hit")
+    g2.add_watch_point(FTB.io_out_s3_full_pred_3_fallThroughErr, { "fallThroughErr_true": fc.Eq(1), "fallThroughErr_false": fc.Eq(0) }, name="s2_full_pred_3_fallThroughErr")
+    g2.add_watch_point(FTB.io_out_s3_full_pred_3_slot_valids_0, { "slot_valids_0": fc.Eq(1), "slot_valids_0_invalid": fc.Eq(0) }, name="s2_full_pred_3_slot_valids_0")
+    g2.add_watch_point(FTB.io_out_s3_full_pred_3_slot_valids_1, { "slot_valids_1": fc.Eq(1), "slot_valids_1_invalid": fc.Eq(0) }, name="s2_full_pred_3_slot_valids_1")
+    g2.add_watch_point(FTB.io_out_s3_full_pred_3_br_taken_mask_0, { "br_taken_mask_0": fc.Eq(1), "br_taken_mask_0_invalid": fc.Eq(0) }, name="s2_full_pred_3_br_taken_mask_0")
+    g2.add_watch_point(FTB.io_out_s3_full_pred_3_br_taken_mask_1, { "br_taken_mask_1": fc.Eq(1), "br_taken_mask_1_invalid": fc.Eq(0) }, name="s2_full_pred_3_br_taken_mask_1")
+    g2.add_watch_point(FTB.io_out_s3_full_pred_3_is_br_sharing, { "is_br_sharing": fc.Eq(1), "is_br_sharing_invalid": fc.Eq(0) }, name="s2_full_pred_3_is_br_sharing")
 
     g3 = fc.CovGroup("ftb_slot")
     g3.add_watch_point(FTB.io_update_bits_ftb_entry_brSlots_0_tarStat, { "hit_2": fc.Eq(2), "hit_1": fc.Eq(1), "hit_0": fc.Eq(0) }, name="brSlots_0_tarStat_hit")
@@ -72,7 +72,7 @@ def test_ftb(request):
     FTB.xclock.StepRis(lambda _: g3.sample())
 
     # Run the test
-    mlvp.setup_logging(log_level=logging.DEBUG, log_file="report/ftb_bank.log")
+    mlvp.setup_logging(log_level=logging.INFO, log_file="report/ftb_bank.log")
     mlvp.run(ftb_test(FTB))
     FTB.finalize()
 

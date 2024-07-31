@@ -8,16 +8,16 @@ def assert_equal(a, b):
         error(f"[Error] UDT is {a}, but model is {b}")
         exit(1)
 
-def compare_uftb_full_pred(uftb_output, std_output):
+def compare_uftb_full_pred(ftb_output, std_output):
     need_compare = ["hit", "slot_valids_0", "slot_valids_1", "targets_0", "targets_1",
                     "offsets_0", "offsets_1", "fallThroughAddr", "is_br_sharing",
                     "br_taken_mask_0", "br_taken_mask_1"]
-    # debug("uftb_output:")
-    # debug(uftb_output)
-    # debug("std_output:")
-    # debug(std_output)
+    # info("ftb_output:")
+    # info(ftb_output)
+    # info("std_output:")
+    # info(std_output)
     for key in need_compare:
-        assert_equal(uftb_output[key], std_output[key])
+        assert_equal(ftb_output[key], std_output[key])
 
 
 
@@ -65,29 +65,35 @@ class BPUTop:
 
         # print(self.pipeline_ctrl.s1_fire_0.value, self.s3_fire)
 
-        assert_equal(self.pipeline_ctrl.s0_fire_0.value, self.s0_fire)
-        assert_equal(self.pipeline_ctrl.s0_fire_1.value, self.s0_fire)
-        assert_equal(self.pipeline_ctrl.s0_fire_2.value, self.s0_fire)
-        assert_equal(self.pipeline_ctrl.s0_fire_3.value, self.s0_fire)
+        assert_equal(self.dut.io_s0_fire_0.value, self.s0_fire)
+        assert_equal(self.dut.io_s0_fire_1.value, self.s0_fire)
+        assert_equal(self.dut.io_s0_fire_2.value, self.s0_fire)
+        assert_equal(self.dut.io_s0_fire_3.value, self.s0_fire)
 
-        assert_equal(self.pipeline_ctrl.s1_fire_0.value, self.s1_fire)
-        assert_equal(self.pipeline_ctrl.s1_fire_1.value, self.s1_fire)
-        assert_equal(self.pipeline_ctrl.s1_fire_2.value, self.s1_fire)
-        assert_equal(self.pipeline_ctrl.s1_fire_3.value, self.s1_fire)
+        assert_equal(self.dut.io_s1_fire_0.value, self.s1_fire)
+        assert_equal(self.dut.io_s1_fire_1.value, self.s1_fire)
+        assert_equal(self.dut.io_s1_fire_2.value, self.s1_fire)
+        assert_equal(self.dut.io_s1_fire_3.value, self.s1_fire)
 
-        assert_equal(self.pipeline_ctrl.s2_fire_0.value, self.s2_fire)
-        assert_equal(self.pipeline_ctrl.s2_fire_1.value, self.s2_fire)
-        assert_equal(self.pipeline_ctrl.s2_fire_2.value, self.s2_fire)
-        assert_equal(self.pipeline_ctrl.s2_fire_3.value, self.s2_fire)
+        assert_equal(self.dut.io_s2_fire_0.value, self.s2_fire)
+        assert_equal(self.dut.io_s2_fire_1.value, self.s2_fire)
+        assert_equal(self.dut.io_s2_fire_2.value, self.s2_fire)
+        assert_equal(self.dut.io_s2_fire_3.value, self.s2_fire)
 
         # Set the value to 1 forcibly to obtain meta information
-        self.dut.io_s1_fire_0.value = 1
-        self.dut.io_s2_fire_0.value = 1
+        # self.dut.io_s1_fire_0.value = 1
+        # self.dut.io_s2_fire_0.value = 1
+
 
         self.dut.io_in_bits_s0_pc_0.value = self.s0_pc
         self.dut.io_in_bits_s0_pc_1.value = self.s0_pc
         self.dut.io_in_bits_s0_pc_2.value = self.s0_pc
         self.dut.io_in_bits_s0_pc_3.value = self.s0_pc
+
+        assert_equal(self.dut.io_in_bits_s0_pc_0.value, self.s0_pc)
+        assert_equal(self.dut.io_in_bits_s0_pc_1.value, self.s0_pc)
+        assert_equal(self.dut.io_in_bits_s0_pc_2.value, self.s0_pc)
+        assert_equal(self.dut.io_in_bits_s0_pc_3.value, self.s0_pc)
 
     def generate_bpu_output(self, dut_output):
         dut_output["s1"]["valid"] = self.s1_fire
@@ -102,7 +108,7 @@ class BPUTop:
         dut_output["s3"]["pc_3"] = self.s3_pc
 
         # Provide Basic FTB Prediction
-        ftb_provider_stage_enable = (False, True, False)
+        ftb_provider_stage_enable = (False, True, True)
 
         if self.s1_fire and ftb_provider_stage_enable[0]:
             ftb_entry = self.ftb_provider.provide_ftb_entry(self.s1_fire, self.s1_pc)
@@ -153,6 +159,8 @@ class BPUTop:
             self.s1_pc = self.s0_pc
             self.s3_hit_way = self.s2_hit_way
             self.s2_hit_way = self.s1_hit_way
+            
+            debug(f"{self.s0_fire} {self.s1_fire} {self.s2_fire} {self.s3_fire}")
 
             npc_gen = self.s0_pc
             next_s0_fire = 1
@@ -166,14 +174,14 @@ class BPUTop:
             bpu_output = self.generate_bpu_output(dut_output)
             # test input
             dut_input = self.io_in.as_dict()
-            assert_equal(dut_input["bits_s0_pc_0"], self.s0_pc)
-            assert_equal(dut_input["bits_s0_pc_1"], self.s0_pc)
-            assert_equal(dut_input["bits_s0_pc_2"], self.s0_pc)
-            assert_equal(dut_input["bits_s0_pc_3"], self.s0_pc)
 
             ftb_entry = FTBEntry.from_full_pred_dict(self.s2_pc, dut_output["s2"]["full_pred"])
-            model_output = self.ftb_model.generate_output(self.s2_fire, self.s2_pc)
+            model_output = self.ftb_model.generate_output(self.s0_fire, 
+                                                          self.s1_fire,
+                                                          self.s2_fire, 
+                                                          self.s2_pc)
             std_ftb_entry = self.ftb_provider.provide_ftb_entry(self.s2_fire, self.s2_pc)
+
             
             if model_output is not None:
                 self.s2_hit_way = model_output[1]
@@ -183,14 +191,9 @@ class BPUTop:
             if self.s2_fire:
                 # Compare dut output and uFTB model output
                 actual_hit = bool(bpu_output["s2"]["full_pred"]["hit"])
-                # debug(bpu_output)
+                # info(bpu_output["s2"]["full_pred"]["hit"])
                 expected_hit = model_output is not None
                 assert_equal(actual_hit, expected_hit)
-
-                if parse_uftb_meta(dut_output["last_stage_meta"])["hit"] or self.s1_hit_way is not None:
-                    actual_hit_way = parse_uftb_meta(dut_output["last_stage_meta"])["pred_way"]
-                    expected_hit_way = 0 if self.s1_hit_way is None else self.s1_hit_way
-                    assert_equal(actual_hit_way, expected_hit_way)
 
                 if model_output:
                     std_full_pred = {}
@@ -199,6 +202,12 @@ class BPUTop:
                     # std_full_pred["br_taken_mask_1"] = model_output[1][1]
                     compare_uftb_full_pred(bpu_output["s2"]["full_pred"], std_full_pred)
 
+            if self.s3_fire:
+                if parse_uftb_meta(dut_output["last_stage_meta"])["hit"] or self.s1_hit_way is not None:
+                    actual_hit_way = parse_uftb_meta(dut_output["last_stage_meta"])["pred_way"]
+                    debug(f"Dut_output last_stage_meta pred_way {actual_hit_way}")
+                    expected_hit_way = 0 if self.s1_hit_way is None else self.s1_hit_way
+                    assert_equal(actual_hit_way, expected_hit_way)
 
             # Forward to FTQ and get update and redirect request
             if self.s2_fire:

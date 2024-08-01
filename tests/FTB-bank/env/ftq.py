@@ -115,6 +115,9 @@ class FTQ:
             redirect_request = self._generate_redirect_request(cfi_target)
             debug("Send Redirect Request: (target: %s)" % hex(cfi_target))
 
+        # if update_request is not None:
+        #     update_request["ftb_entry"]["valid"] = update_request["ftb_entry"]["brSlots_0_valid"] or update_request["ftb_entry"]["tailSlot_valid"]
+
         return (update_request, redirect_request)
 
     def _get_entry(self, ptr):

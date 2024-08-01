@@ -76,6 +76,7 @@ class FTBBank:
         # self.update_write_alloc = None
 
         self.update_queue = []
+        self.output_queue = []
         self.replacer_update_queue = [[], []]
 
     def find_set_from_idx(self, idx):
@@ -86,29 +87,51 @@ class FTBBank:
     
     def update(self, update_request):
         idx = FTBSet.get_idx(update_request["bits_pc"])
-        pc = FTBWay.get_tag(update_request["bits_pc"])
-        debug(f"Update request [{idx}] {hex(pc)}")
+        tag = FTBWay.get_tag(update_request["bits_pc"])
+        debug(f"Update request [{idx}] {hex(tag)}")
+        # info(update_request)
         self.update_queue.append((update_request, 2, None, None))
     
-    def generate_output(self, s0_fire, s1_fire, s2_fire, s2_pc): 
+    def generate_output(self, s0_fire, s1_fire, s2_fire, s3_fire, pc): 
         # debug(FTBSet.get_idx(s2_pc))
-        debug(f"Generate output [{FTBSet.get_idx(s2_pc)}] {hex(FTBWay.get_tag(s2_pc))}")
         debug(self)
-
+        debug(f"{s0_fire}, {s1_fire}, {s2_fire}, {s3_fire}")
+        debug(f"Generate output [{FTBSet.get_idx(pc)}] {hex(FTBWay.get_tag(pc))}")
         # self.process_update()
-
         if s0_fire:
-            # debug(f"s2_fire is off")
-            read_resp, read_hits = self.process_read(s2_pc)
+            self.output_queue.append((pc, None, None, 2))
 
-        if s1_fire or s2_fire:
-            if read_hits is None:
-                return None
-            else:
-                return read_resp, read_hits
+        s2 = (None, None)
+        s3 = (None, None)
 
-        # br_taken_mask = self._generate_br_taken_mask(s2_pc, read_hits)
-        return None
+        new_output_queue = []
+        
+        for i in range(len(self.output_queue)):
+            if self.output_queue[i][3] == 0: # s2_fire
+                if s3_fire:
+                    debug(f"Generate output [{FTBSet.get_idx(self.output_queue[i][0])}] {hex(FTBWay.get_tag(self.output_queue[i][0]))} stage 2")
+                    s3 = (self.output_queue[i][1], self.output_queue[i][2])
+            elif self.output_queue[i][3] == 1: # s1_fire
+                read_resp, read_hits = self.process_read(self.output_queue[i][0])
+                if s2_fire:
+                    debug(f"Generate output [{FTBSet.get_idx(self.output_queue[i][0])}] {hex(FTBWay.get_tag(self.output_queue[i][0]))} stage 1")
+                    new_output_queue.append((self.output_queue[i][0],
+                                         read_resp,
+                                         read_hits,
+                                         self.output_queue[i][3] - 1))
+                    s2 = (read_resp, read_hits)
+            elif self.output_queue[i][3] == 2: # s0_fire
+                debug(f"Generate output [{FTBSet.get_idx(self.output_queue[i][0])}] {hex(FTBWay.get_tag(self.output_queue[i][0]))} stage 0")
+                new_output_queue.append((self.output_queue[i][0],
+                                         self.output_queue[i][1],
+                                         self.output_queue[i][2],
+                                         self.output_queue[i][3] - 1))
+                
+        self.output_queue = new_output_queue
+        
+        # debug(f"generate_output output {s2} {s3}")
+
+        return s2 + s3
 
     def process_read(self, req_pc):
         # lookup idx and tag
@@ -117,6 +140,7 @@ class FTBBank:
 
         # find FTBWay
         read_hits = self.ftbsets[idx].find_way_from_tag(tag)
+        debug(f"Process_read read way {read_hits}")
         if read_hits is None:
             return None, None
 
@@ -128,7 +152,7 @@ class FTBBank:
 
         return read_resp, read_hits
 
-    def process_update(self):
+    def process_update(self, s3_fire):
         for i in range(2):
             new_replacer_update_queue = []
             for j in range(len(self.replacer_update_queue[i])):
@@ -167,7 +191,7 @@ class FTBBank:
                 meta = parse_uftb_meta(update_request["bits_meta"])
                 
                 # debug(meta)
-                if meta["hit"]:
+                if meta["hit"] and s3_fire:
                     self._update_ways(FTBSet.get_idx(update_request["bits_pc"]), 
                                       meta["pred_way"], 
                                       update_request["bits_pc"], 
@@ -237,7 +261,8 @@ class FTBBank:
 
     def __str__(self) -> str:
         str = ""
-        for i in range(22, 22 + 1):
+        start = 451
+        for i in range(start, start + 1):
             for j in range(len(self.ftbsets[i].ftbways)):
                 if self.ftbsets[i].ftbways[j].valid:
                     str += "\n"

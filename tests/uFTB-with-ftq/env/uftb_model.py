@@ -47,7 +47,8 @@ class uFTBModel:
 
     def _generate_br_taken_mask(self, hit_way):
         ftb_entry = self.ftbways[hit_way].ftb_entry
-        br_taken_mask = [self.counters[hit_way][0].get_prediction(), self.counters[hit_way][1].get_prediction()]
+        br_taken_mask = [self.counters[hit_way][0].get_prediction(), 
+                         self.counters[hit_way][1].get_prediction()]
         for i in range(2):
             if ftb_entry.always_taken[i]:
                 br_taken_mask[i] = 1

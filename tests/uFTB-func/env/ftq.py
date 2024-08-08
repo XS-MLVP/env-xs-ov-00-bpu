@@ -117,10 +117,6 @@ class FTQ:
 
         return (update_request, redirect_request)
 
-
-
-
-
     def _get_entry(self, ptr):
         return self.entries[ptr % 32]
 
@@ -156,7 +152,7 @@ class FTQ:
                 debug("Target Error: actual: %s expected: %s" % (hex(entry.pc), hex(executor_current_pc)))
 
             # Create a new FTB entry and update & redirect
-            new_ftb_entry, br_taken_mask = self._generate_new_ftb_entry(executor_current_pc)
+            new_ftb_entry, br_taken_mask = self.generate_new_ftb_entry(executor_current_pc)
             self.update_queue.append((executor_current_pc, new_ftb_entry, br_taken_mask))
             self.redirect_queue.append((self.executor.current_inst()[0]))
 
@@ -204,11 +200,12 @@ class FTQ:
             pred_stat.record_cond_branch(branch["pc"], correct)
         else:
             correct = cfi_addr is not None and branch["pc"] == cfi_addr and branch["target"] == cfi_target
-            pred_stat.record_jmp_branch(branch["pc"], PredictionStatistician.get_type(Executor.is_call_inst(branch),
-                                                                                        Executor.is_ret_inst(branch),
-                                                                                        Executor.is_jalr_inst(branch),
-                                                                                        Executor.is_jal_inst(branch)),
-                                            correct)
+            pred_stat.record_jmp_branch(branch["pc"], 
+                                        PredictionStatistician.get_type(Executor.is_call_inst(branch),
+                                        Executor.is_ret_inst(branch),
+                                        Executor.is_jalr_inst(branch),
+                                        Executor.is_jal_inst(branch)),
+                                        correct)
 
     def _execute_this_pred_block(self, pc, full_pred):
         end_pc = full_pred["fallThroughAddr"]
@@ -243,7 +240,7 @@ class FTQ:
 
         return all_branches, redirect_addr, br_taken_mask
 
-    def _generate_new_ftb_entry(self, pc):
+    def generate_new_ftb_entry(self, pc):
         br_taken_mask = []
         ftb_entry = FTBEntry()
 
@@ -275,10 +272,10 @@ class FTQ:
                                                   Executor.is_jal_inst(branch))
                     if success:
                         pred_stat.record_jmp_branch(branch["pc"], PredictionStatistician.get_type(Executor.is_call_inst(branch),
-                                                                                                    Executor.is_ret_inst(branch),
-                                                                                                    Executor.is_jalr_inst(branch),
-                                                                                                    Executor.is_jal_inst(branch)),
-                                                        False)
+                        Executor.is_ret_inst(branch),
+                        Executor.is_jalr_inst(branch),
+                        Executor.is_jal_inst(branch)),
+                        False)
                         fallthrough_addr += 2
                         self.executor.next_inst()
 

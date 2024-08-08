@@ -1,5 +1,43 @@
 from .utils import *
 
+def generate_new_ftb_entry(is_sharing: int = 1, 
+                           is_0_taken: int = 0, 
+                           is_1_taken: int = 0,
+                           br_0_start_pc: int = 1,
+                           br_0_inst_pc: int = 2,
+                           br_0_target_addr: int = 4,
+                           br_share_start_pc: int = 1,
+                           br_share_inst_pc: int = 2,
+                           br_share_target_addr: int = 4,
+                           tail_start_pc: int = 1,
+                           tail_inst_pc: int = 2,
+                           tail_target_addr: int = 1,
+                           tail_inst_len: int = 4,):
+    ftb_entry = FTBEntry()
+
+    ftb_entry.valid = True
+    if is_sharing:
+        ftb_entry.add_cond_branch_inst(br_0_start_pc, 
+                                       br_0_inst_pc, 
+                                       is_0_taken, 
+                                       br_0_target_addr)
+        ftb_entry.add_cond_branch_inst(br_share_start_pc, 
+                                       br_share_inst_pc, 
+                                       is_1_taken, 
+                                       br_share_target_addr)
+    else:
+        ftb_entry.add_cond_branch_inst(br_0_start_pc, 
+                                       br_0_inst_pc, 
+                                       is_0_taken, 
+                                       br_0_target_addr)
+        ftb_entry.add_jmp_inst(tail_start_pc, 
+                               tail_inst_pc, 
+                               tail_target_addr, 
+                               tail_inst_len, 
+                               0, 0, 0, 0)
+
+    return ftb_entry
+
 class FTBSlot:
     def __init__(self):
         self.valid = 0

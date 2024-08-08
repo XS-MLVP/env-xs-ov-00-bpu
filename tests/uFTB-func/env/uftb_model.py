@@ -17,6 +17,12 @@ class uFTBModel:
         self.replacer = PLRU(UFTB_WAYS_NUM)
         self.ftbways = [uFTBWay() for _ in range(UFTB_WAYS_NUM)]
         self.counters = [[TwoBitsCounter(), TwoBitsCounter()] for _ in range(UFTB_WAYS_NUM)]
+        self.ubtb_enable = 1
+        self.meta = [(0, None), (0, None), (0, None)]
+
+        self.pred_result_ftb_entry = None
+        self.pred_result_br_taken_mask = None
+        self.pred_result_meta = None
 
         # Update requests are used to update FTBways and counters.
         self.update_queue = []
@@ -28,22 +34,40 @@ class uFTBModel:
     def update(self, update_request):
         self.update_queue.append((update_request, 2, None))
 
-    def generate_output(self, s1_fire, s1_pc):
-        self._process_update()
-        if s1_fire:
-            hit_way = self._find_hit_way(s1_pc)
-            if hit_way is None:
-                return None
-            self.replacer_update_queue[0].append((hit_way, 1))
+    def generate_output(self, s0_fire, s0_pc):
+        if not self.ubtb_enable:
+            return None, None, None
+        if s0_fire:
+            hit_way = self._find_hit_way(s0_pc)
+            if hit_way is not None:
+                # self.replacer_update_queue[0].append((hit_way, 1))
 
-            ftb_entry = self.ftbways[hit_way].ftb_entry
-            br_taken_mask = self._generate_br_taken_mask(hit_way)
+                self.pred_result_ftb_entry = self.ftbways[hit_way].ftb_entry
+                self.pred_result_br_taken_mask = self._generate_br_taken_mask(hit_way)
+            else:
+                self.pred_result_ftb_entry = None
+                self.pred_result_br_taken_mask = None
+            
+            self.meta[0] = self.meta[1]
+            self.meta[1] = self.meta[2]
+            self.meta[2] = (hit_way, hit_way is not None)
 
-            return ftb_entry, br_taken_mask, hit_way
+            if self.meta[0] is not None and self.meta[0][1]:
+                self.pred_result_meta = self.meta[0][0]
+                return self.pred_result_ftb_entry, self.pred_result_br_taken_mask, self.pred_result_meta
+            else:
+                self.pred_result_meta = self.meta[0][0]
+                return self.pred_result_ftb_entry, self.pred_result_br_taken_mask, self.pred_result_meta
+        else:
+            return self.pred_result_ftb_entry, self.pred_result_br_taken_mask, self.pred_result_meta
 
     def print_all_ftb_ways(self):
         for i in range(UFTB_WAYS_NUM):
-            debug(f"way {i}: valid: {self.ftbways[i].valid}, tag: {hex(self.ftbways[i].tag << 1)}")
+            if not self.ftbways[i].valid:
+                continue
+            co1 = self.counters[i][0].counter
+            co2 = self.counters[i][1].counter
+            info(f"way {i}: valid: {self.ftbways[i].valid}, tag: {hex(self.ftbways[i].tag << 1)}, [{co1}, {co2}]")
 
     def _generate_br_taken_mask(self, hit_way):
         ftb_entry = self.ftbways[hit_way].ftb_entry
@@ -123,9 +147,12 @@ class uFTBModel:
             return
 
         need_to_update = [False, False]
-        brslot_valid = [update_request["ftb_entry"]["brSlots_0_valid"], update_request["ftb_entry"]["tailSlot_valid"] and update_request["ftb_entry"]["tailSlot_sharing"]]
-        br_taken_mask = [update_request["bits_br_taken_mask_0"], update_request["bits_br_taken_mask_1"]]
-        always_taken = [update_request["ftb_entry"]["always_taken_0"], update_request["ftb_entry"]["always_taken_1"]]
+        brslot_valid = [update_request["ftb_entry"]["brSlots_0_valid"], 
+                        update_request["ftb_entry"]["tailSlot_valid"] and update_request["ftb_entry"]["tailSlot_sharing"]]
+        br_taken_mask = [update_request["bits_br_taken_mask_0"], 
+                         update_request["bits_br_taken_mask_1"]]
+        always_taken = [update_request["ftb_entry"]["always_taken_0"], 
+                        update_request["ftb_entry"]["always_taken_1"]]
 
         cfi_pos = 0 if br_taken_mask[0] else (1 if br_taken_mask[1] else 2)
         for i in range(2):

@@ -19,8 +19,6 @@ def get_fallthrough_addr(pc, part_addr, carry):
     higher = (pc >> (INST_OFFSET_BITS + PREDICT_WIDTH_OFFSET_BITS)) + carry
     return (higher << (INST_OFFSET_BITS + PREDICT_WIDTH_OFFSET_BITS)) | (part_addr << INST_OFFSET_BITS)
 
-
-
 def get_lower_addr(pc, bits):
     return (pc >> INST_OFFSET_BITS) & ((1 << bits) - 1)
 
@@ -77,3 +75,15 @@ def parse_uftb_meta(meta):
         "pred_way": meta >> 1,
         "hit": meta & 1
     }
+
+def gen_update_request(pc, new_ftb_entry, br_taken_mask, valid: bool = True):
+    update_request = {}
+
+    update_request["valid"] = valid
+    update_request["bits_pc"] = pc
+    update_request["ftb_entry"] = new_ftb_entry.__dict__()
+    update_request["bits_br_taken_mask_0"] = 0 if len(br_taken_mask) == 0 else br_taken_mask[0]
+    update_request["bits_br_taken_mask_1"] = 0 if len(br_taken_mask) < 2 else br_taken_mask[1]
+
+    return update_request
+        

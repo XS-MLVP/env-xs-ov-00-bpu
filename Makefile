@@ -37,6 +37,9 @@ ras:
 ittage:
 	make -f ./mk/ITTAGE.mk ittage
 
+bputop:
+	make -f ./mk/BPUTop.mk BPUTop
+
 filter:
 	cat log|grep Cannot |awk '{print $8}'| sort| uniq|tr -d "'"
 

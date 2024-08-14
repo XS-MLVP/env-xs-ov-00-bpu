@@ -16,7 +16,7 @@ def set_imm_mode(FTB):
     imm_mode = FTB.io_s0_fire_0.xdata.Imme
     need_to_write_imm = ["io_s0_fire_0", "io_s0_fire_1", "io_s0_fire_2", "io_s0_fire_3",
                         "io_s1_fire_0", "io_s2_fire_0", "io_in_bits_s0_pc_0", "io_in_bits_s0_pc_1",
-                        "io_in_bits_s0_pc_2", "io_in_bits_s0_pc_3"]
+                        "io_in_bits_s0_pc_2", "io_in_bits_s0_pc_3", "reset"]
     for name in need_to_write_imm:
         getattr(FTB, name).xdata.SetWriteMode(imm_mode)
 

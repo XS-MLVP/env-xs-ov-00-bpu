@@ -79,6 +79,35 @@ class BPUTop:
         self.enable_ctrl.ubtb_enable.value = ubtb_enable
         assert_equal(self.dut.io_ctrl_ubtb_enable.value, ubtb_enable) 
 
+    async def io_set(self):
+        self.dut_out.last_stage_meta.value = 0
+        self.dut.io_out_last_stage_meta.value = 0
+        # self.dut_out.s1.pc_0.value = 0
+        # self.dut_out.s1.pc_1.value = 0
+        # self.dut_out.s1.pc_2.value = 0
+        # self.dut_out.s1.pc_3.value = 0
+        # self.dut_out.s1.valid.value = 1
+        # self.dut_out.s1.hasRedirect.value = 0
+        # self.dut_out.s1.ftq_idx.value = 0
+        # self.dut_out.s1.full_pred.hit.value = 0
+        # self.dut_out.s1.full_pred.slot_valids_0.value = 0
+        # self.dut_out.s1.full_pred.slot_valids_1.value = 0
+        # self.dut_out.s1.full_pred.targets_0.value = 0
+        # self.dut_out.s1.full_pred.targets_1.value = 0
+        # self.dut_out.s1.full_pred.offsets_0.value = 0
+        # self.dut_out.s1.full_pred.offsets_1.value = 0
+        # self.dut_out.s1.full_pred.fallThroughAddr.value = 0
+        # self.dut_out.s1.full_pred.fallThroughErr.value = 0
+        # self.dut_out.s1.full_pred.is_jal.value = 0
+        # self.dut_out.s1.full_pred.is_jalr.value = 0
+        # self.dut_out.s1.full_pred.is_call.value = 0
+        # self.dut_out.s1.full_pred.is_ret.value = 0
+        # self.dut_out.s1.full_pred.is_br_sharing.value = 0
+        # self.dut_out.s1.full_pred.last_may_be_rvi_call.value = 0
+        # self.dut_out.s1.full_pred.br_taken_mask_0.value = 0
+        # self.dut_out.s1.full_pred.br_taken_mask_1.value = 0
+        # self.dut_out.s1.full_pred.jalr_target.value = 0
+
     def generate_bpu_output(self, dut_output):
         dut_output["s1"]["valid"] = self.s1_fire
         dut_output["s2"]["valid"] = self.s2_fire
@@ -120,7 +149,7 @@ class BPUTop:
         return dut_output
 
     async def run(self):
-        self.uftb_model.ubtb_enable = 1
+        self.uftb_model.ubtb_enable.value = 1
         self.s0_pc = RESET_VECTOR
 
         await self.reset()
@@ -130,7 +159,9 @@ class BPUTop:
             await ClockCycles(self.dut, 1)
             self.step_assign()
             bpu_output, model_output, std_ftb_entry = await self.one_step_stage_one()
+            
             update_request, redirect_request = self.ftq.update(bpu_output, std_ftb_entry)
+
             await self.one_step_stage_two(update_request, redirect_request)
 
     def step_assign(self):
@@ -184,6 +215,7 @@ class BPUTop:
         # self.uftb_model.print_all_ftb_ways()
 
         # Get dut output and generate bpu output
+        # await self.io_set()
         dut_output = self.dut_out.as_dict()
         bpu_output = self.generate_bpu_output(dut_output)
 

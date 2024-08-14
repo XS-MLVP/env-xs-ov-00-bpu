@@ -82,8 +82,8 @@ def gen_update_request(pc, new_ftb_entry, br_taken_mask, valid: bool = True):
     update_request["valid"] = valid
     update_request["bits_pc"] = pc
     update_request["ftb_entry"] = new_ftb_entry.__dict__()
-    update_request["bits_br_taken_mask_0"] = 0 if len(br_taken_mask) == 0 else br_taken_mask[0]
-    update_request["bits_br_taken_mask_1"] = 0 if len(br_taken_mask) < 2 else br_taken_mask[1]
+    update_request["bits_br_taken_mask_0"] = br_taken_mask[0]
+    update_request["bits_br_taken_mask_1"] = br_taken_mask[1]
 
     return update_request
         

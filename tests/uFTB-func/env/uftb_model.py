@@ -147,22 +147,21 @@ class uFTBModel:
             return
 
         need_to_update = [False, False]
-        brslot_valid = [update_request["ftb_entry"]["brSlots_0_valid"], 
-                        update_request["ftb_entry"]["tailSlot_valid"] and update_request["ftb_entry"]["tailSlot_sharing"]]
-        br_taken_mask = [update_request["bits_br_taken_mask_0"], 
-                         update_request["bits_br_taken_mask_1"]]
-        always_taken = [update_request["ftb_entry"]["always_taken_0"], 
-                        update_request["ftb_entry"]["always_taken_1"]]
 
-        cfi_pos = 0 if br_taken_mask[0] else (1 if br_taken_mask[1] else 2)
-        for i in range(2):
-            need_to_update[i] = i <= cfi_pos \
-                                and not always_taken[i] \
-                                and brslot_valid[i]
+        need_to_update[0] = update_request["ftb_entry"]["brSlots_0_valid"] and \
+                            update_request["valid"] and \
+                            not update_request["ftb_entry"]["always_taken_0"]
+        
+        need_to_update[1] = update_request["ftb_entry"]["tailSlot_valid"] and \
+                            update_request["ftb_entry"]["tailSlot_sharing"] and \
+                            update_request["valid"] and \
+                            not update_request["ftb_entry"]["always_taken_1"] and \
+                            not update_request["bits_br_taken_mask_0"]
 
-        for i in range(2):
-            if need_to_update[i]:
-                self.counters[selected_way][i].update(br_taken_mask[i])
+        if need_to_update[0]:
+            self.counters[selected_way][0].update(update_request["bits_br_taken_mask_0"])
+        if need_to_update[1]:
+            self.counters[selected_way][1].update(update_request["bits_br_taken_mask_1"])
 
     def _update_all(self, update_request, selected_way):
         self._update_ftb_ways(update_request, selected_way)

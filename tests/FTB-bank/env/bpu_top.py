@@ -1,6 +1,9 @@
+import os
+os.sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../")
+
 from mlvp import *
 from .bundle import *
-from .ftq import *
+from drivers.ftq import *
 from .ftb_bank import FTBBank
 
 def assert_equal(a, b):
@@ -43,6 +46,12 @@ class BPUTop:
         self.s1_hit_way = 0
         self.s2_hit_way = 0
         self.s3_hit_way = 0
+
+        self.npc_gen = 0
+        self.next_s0_fire = 0
+        self.s1_flush = False
+        self.s2_flush = False
+        self.s3_flush = False
 
         self.ftq = FTQ()
         self.ftb_model = FTBBank()
@@ -97,6 +106,7 @@ class BPUTop:
         assert_equal(self.dut.io_ctrl_btb_enable.value, btb_enable) 
 
     def generate_bpu_output(self, dut_output):
+        info(self.s1_fire)
         dut_output["s1"]["valid"] = self.s1_fire
         dut_output["s2"]["valid"] = self.s2_fire
         dut_output["s3"]["valid"] = self.s3_fire
@@ -161,7 +171,7 @@ class BPUTop:
         self.s2_flush = False
         self.s3_flush = False
 
-    def one_step_stage_one(self):
+    async def one_step_stage_one(self):
         self.ftb_model.process_update(self.s3_fire)
 
         # Get dut output and generate bpu output
@@ -186,7 +196,6 @@ class BPUTop:
         assert_equal(dut_s2_hit, model_s2_hit)
         assert_equal(dut_s3_hit, model_s3_hit)
 
-
         if model_s2_hit or dut_s2_hit:
             model_s2_full_pred = {}
             s2_read_resp.put_to_full_pred_dict(self.s1_pc, model_s2_full_pred)
@@ -210,10 +219,9 @@ class BPUTop:
         if self.s3_fire:
             npc_gen = get_target_from_full_pred_dict(self.s3_pc, dut_output["s3"]["full_pred"])
         
-
         return bpu_output, (s2_read_resp, s2_read_hits, s3_read_resp, s3_read_hits), std_ftb_entry
 
-    def one_stage_step_two(self, update_request, redirect_request):
+    async def one_step_stage_two(self, update_request, redirect_request):
         ## Update Request
         if update_request:
             self.ftb_model.update(update_request)
@@ -285,5 +293,7 @@ class BPUTop:
         await self.one_step_stage_two(update_request, redirect_request)
 
         self.ftb_model.btb_enable = btb_enable
+
+        info(bpu_output)
 
         return bpu_output, module_output

@@ -1,6 +1,9 @@
 from mlvp.modules import PLRU, TwoBitsCounter
 from mlvp import info, debug
-from .ftb_way import *
+
+import os
+os.sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../")
+from drivers.ftb_way import *
 
 # pc: | ... |<-- tag(20 bits) -->|<-- idx(9 bits) -->|<-- instOffset(1 bit) -->|
 #           |     way number     |    group number   |

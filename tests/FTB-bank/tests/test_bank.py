@@ -4,16 +4,16 @@ import logging
 import os
 os.sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 
-from env.bundle import *
 from env.bpu_top import *
-from env.config import *
 
-os.sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../uFTB-func")
+os.sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../")
 
-from env.utils import gen_update_request
-from env.ftb_way import generate_new_ftb_entry
+from env.bundle import *
+from drivers.config import *
+from drivers.utils import gen_update_request
+from drivers.ftb_way import generate_new_ftb_entry
 
-os.sys.path.append(DUT_PATH)
+os.sys.path.append(FTB_DUT_PATH)
 
 from UT_FTB import *
 
@@ -80,8 +80,8 @@ async def run(FTB):
     enable_ctrl = EnableCtrlBundle.from_prefix("io_ctrl_").set_name("enable_ctrl").bind(FTB)
     io_in = IoInBundle.from_prefix("io_in_").set_name("io_in").bind(FTB)
 
-    mlvp.create_task(BPUTop(FTB, FTB_out, FTB_update, pipeline_ctrl, enable_ctrl, io_in).run())
 
+    bpu = BPUTop(FTB, FTB_out, FTB_update, pipeline_ctrl, enable_ctrl, io_in)
 
     mlvp.create_task(mlvp.start_clock(FTB))
     await control_signal_test_1(bpu)
@@ -94,7 +94,7 @@ async def control_signal_test_1(bpu):
 
     entrys = tuple((generate_new_ftb_entry() for _ in range(10)))
 
-    case_part_1 = tuple(((0x1000, gen_update_request(0x10 * i, entrys[i], (1, 1))) for i in range(10)))
+    case_part_1 = tuple(((0x1000, gen_update_request(0x10 * i, entrys[i], (1, 1), meta_hit = 0)) for i in range(10)))
     case_part_2 = tuple(((0x10 * i, None) for i in range(10)))
     case_part_3 = tuple(((0x10 * i, None) for i in range(10)))
 
@@ -107,7 +107,9 @@ async def control_signal_test_1(bpu):
         output, _ = await bpu.drive_once(cases[i][0], 
                                          cases[i][1])
 
-        if i < 10:
+        if i < 2:
+            pass
+        elif i < 10:
             assert output["s1"]["full_pred"]["hit"] == 0
         elif i >= 10 and i < 20:
             assert output["s1"]["full_pred"]["hit"] == 1

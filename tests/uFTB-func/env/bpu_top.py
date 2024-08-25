@@ -2,7 +2,7 @@ import os
 os.sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../")
 
 from mlvp import *
-from drivers.bundle import *
+from .bundle import *
 from drivers.ftq import *
 from .uftb_model import uFTBModel
 

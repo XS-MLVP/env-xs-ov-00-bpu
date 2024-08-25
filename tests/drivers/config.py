@@ -3,7 +3,8 @@ MAX_CYCLE = 30000
 
 import os
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__)) + "/../.."
-DUT_PATH = ROOT_PATH + "/out/picker_out_uFTB"
+uFTB_DUT_PATH = ROOT_PATH + "/out/picker_out_uFTB"
+FTB_DUT_PATH = ROOT_PATH + "/out/picker_out_FTB"
 UTILS_PATH = ROOT_PATH + "/utils"
 RROGRAM_FORDER_PATH = UTILS_PATH + "/ready-to-run"
 PROGRAM_PATH = RROGRAM_FORDER_PATH + "/" + PROGRAM_NAME

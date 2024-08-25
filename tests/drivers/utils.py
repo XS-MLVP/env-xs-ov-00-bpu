@@ -76,11 +76,16 @@ def parse_uftb_meta(meta):
         "hit": meta & 1
     }
 
-def gen_update_request(pc, new_ftb_entry, br_taken_mask, valid: bool = True):
+def reconstruct_uftb_meta(pred_way, hit):
+    return (pred_way << 1) | hit
+
+def gen_update_request(pc, new_ftb_entry, br_taken_mask, valid: bool = True, meta_hit: int = -1, meta_writeWay: int = 0):
     update_request = {}
 
     update_request["valid"] = valid
     update_request["bits_pc"] = pc
+    if not meta_hit == -1:
+        update_request["bits_meta"] = reconstruct_uftb_meta(meta_hit, meta_writeWay);
     update_request["ftb_entry"] = new_ftb_entry.__dict__()
     update_request["bits_br_taken_mask_0"] = br_taken_mask[0]
     update_request["bits_br_taken_mask_1"] = br_taken_mask[1]

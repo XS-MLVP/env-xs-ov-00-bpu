@@ -7,12 +7,12 @@ os.sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../")
 
 from drivers.utils import gen_update_request
 from drivers.ftb_way import generate_new_ftb_entry
-from drivers.bundle import *
 from drivers.config import *
 
 from env.bpu_top import *
+from env.bundle import *
 
-os.sys.path.append(DUT_PATH)
+os.sys.path.append(uFTB_DUT_PATH)
 
 from UT_FauFTB import *
 

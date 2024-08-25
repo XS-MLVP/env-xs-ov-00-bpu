@@ -1,13 +1,14 @@
-import itertools
 import mlvp
 import logging
 
 import os
 os.sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
+os.sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../")
 
-from env.utils import gen_update_request
-from env.ftb_way import generate_new_ftb_entry
-from env.bundle import *
+from top.utils import gen_update_request
+from top.ftb_way import generate_new_ftb_entry
+from top.bundle import *
+
 from env.bpu_top import *
 from env.config import *
 
@@ -15,11 +16,15 @@ os.sys.path.append(DUT_PATH)
 
 from UT_FauFTB import *
 
-def set_imm_mode(uFTB):
+def set_imm_mode(uFTB, i: bool = False):
     imm_mode = uFTB.io_s0_fire_0.xdata.Imme
     need_to_write_imm = ["io_s0_fire_0", "io_s0_fire_1", "io_s0_fire_2", "io_s0_fire_3",
-                        "io_s1_fire_0", "io_s2_fire_0", "io_in_bits_s0_pc_0", "io_in_bits_s0_pc_1",
-                        "io_in_bits_s0_pc_2", "io_in_bits_s0_pc_3", "reset"]
+                        "io_s1_fire_0", "io_s2_fire_0", "io_in_bits_s0_pc_0", 
+                        "io_in_bits_s0_pc_1", "io_in_bits_s0_pc_2", "io_in_bits_s0_pc_3", 
+                        "reset"]
+    if i:
+        need_to_write_imm.remove("reset")
+
     for name in need_to_write_imm:
         getattr(uFTB, name).xdata.SetWriteMode(imm_mode)
 
@@ -28,6 +33,7 @@ from mlvp.reporter import *
 
 def test_uftb_func(request):
     # Create DUT
+
     uFTB = DUTFauFTB(waveform_filename="report/uftb_func.fst", 
                      coverage_filename="report/uftb_func_coverage.dat")
     uFTB.init_clock("clock")
@@ -67,7 +73,7 @@ def test_uftb_func(request):
     pred_stat.summary()
     set_func_coverage(request, [g1, g2])
     set_line_coverage(request, "report/uftb_func_coverage.dat")
-    
+
 async def run(uFTB):
 
     uFTB_update = UpdateBundle.from_prefix("io_update_").set_name("uFTB_update").bind(uFTB)
@@ -979,29 +985,4 @@ async def set_io_out_test(bpu):
     output, _ = await bpu.drive_once(0, None, s1_fire = 1, s2_fire = 1)
 
     info("[IO函数测试] set_io_out_ test [pass]")
-    # await ClockCycles(uFTB, MAX_CYCLE)
-
-async def replacer_touch_ways_0_valid_REG_test(bpu):
-    await bpu.reset()
-    
-    entrys_1 = tuple((generate_new_ftb_entry() for _ in range(32)))
-
-    case_part_1 = tuple(((0x10000, 
-                          gen_update_request(0x10 * i, entrys_1[i], (1, 1))) 
-                          for i in range(32)))
-    case_part_2 = tuple(((0x10 * i, 
-                          gen_update_request(0x10 * i, entrys_1[i], (1, 1), valid = 0)) 
-                          for i in range(32)))
-
-    cases = case_part_1 + case_part_2
-
-    for i in range(len(cases)):
-        output, _ = await bpu.drive_once(cases[i][0], cases[i][1], s1_fire = 1)
-
-        if i < 32:
-            assert output["s1"]["full_pred"]["hit"] == 0
-        elif i >= 32 and i < 48:
-            assert output["s1"]["full_pred"]["hit"] == 1
-
-    info("[FTB项更新4] replacer_touch_ways_0_valid_REG test [pass]")
     # await ClockCycles(uFTB, MAX_CYCLE)

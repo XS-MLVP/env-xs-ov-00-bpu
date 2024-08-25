@@ -1,6 +1,10 @@
+import os
+os.sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../")
+
 from mlvp.modules import PLRU, TwoBitsCounter
 from mlvp import *
-from .ftb_way import *
+from top.ftb_way import *
+from top.config import *
 
 class uFTBWay:
     def __init__(self):

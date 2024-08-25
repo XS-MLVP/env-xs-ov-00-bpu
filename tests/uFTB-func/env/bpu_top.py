@@ -1,6 +1,9 @@
+import os
+os.sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../")
+
 from mlvp import *
-from .bundle import *
-from .ftq import *
+from top.bundle import *
+from top.ftq import *
 from .uftb_model import uFTBModel
 
 def assert_equal(a, b, key: str = ""):

@@ -1,4 +1,7 @@
-from .utils import *
+import os
+os.sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../")
+
+from top.utils import *
 
 def generate_new_ftb_entry(is_sharing: int = 1, 
                            is_0_taken: int = 0, 

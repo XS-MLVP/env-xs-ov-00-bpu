@@ -111,12 +111,12 @@ class FTBBank:
         
         for i in range(len(self.output_queue)):
             if self.output_queue[i][3] == 0: # s2_fire
-                if s3_fire:
+                if s2_fire:
                     debug(f"Generate output [{FTBSet.get_idx(self.output_queue[i][0])}] {hex(FTBWay.get_tag(self.output_queue[i][0]))} stage 2")
                     s3 = (self.output_queue[i][1], self.output_queue[i][2])
             elif self.output_queue[i][3] == 1: # s1_fire
                 read_resp, read_hits = self.process_read(self.output_queue[i][0])
-                if s2_fire:
+                if s1_fire:
                     debug(f"Generate output [{FTBSet.get_idx(self.output_queue[i][0])}] {hex(FTBWay.get_tag(self.output_queue[i][0]))} stage 1")
                     new_output_queue.append((self.output_queue[i][0],
                                          read_resp,
@@ -262,10 +262,10 @@ class FTBBank:
         debug(f"Update replacer [{idx}] [{way}]")
         self.ftbsets[idx].replacer.update(way)
 
-    def __str__(self) -> str:
+    def __str__(self, start: int = 0, end: int = 512) -> str:
         str = ""
-        start = 451
-        for i in range(start, start + 1):
+        # start = 451
+        for i in range(start, end):
             for j in range(len(self.ftbsets[i].ftbways)):
                 if self.ftbsets[i].ftbways[j].valid:
                     str += "\n"

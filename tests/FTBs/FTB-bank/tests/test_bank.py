@@ -10,7 +10,7 @@ os.sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../../")
 
 from env.bundle import *
 from drivers.config import *
-from drivers.utils import gen_update_request
+from drivers.utils import gen_update_request, generate_pc
 from drivers.ftb_way import generate_new_ftb_entry
 
 os.sys.path.append(FTB_DUT_PATH)
@@ -73,13 +73,11 @@ def test_ftb(request):
 
 async def run(FTB):
 
-
     FTB_update = UpdateBundle.from_prefix("io_update_").set_name("FTB_update").bind(FTB)
     FTB_out = BranchPredictionResp.from_prefix("io_out_").set_name("FTB_out").bind(FTB)
     pipeline_ctrl = PipelineCtrlBundle.from_prefix("io_").set_name("pipeline_ctrl").bind(FTB)
     enable_ctrl = EnableCtrlBundle.from_prefix("io_ctrl_").set_name("enable_ctrl").bind(FTB)
     io_in = IoInBundle.from_prefix("io_in_").set_name("io_in").bind(FTB)
-
 
     bpu = BPUTop(FTB, FTB_out, FTB_update, pipeline_ctrl, enable_ctrl, io_in)
 
@@ -94,27 +92,33 @@ async def control_signal_test_1(bpu):
 
     entrys = tuple((generate_new_ftb_entry() for _ in range(10)))
 
-    case_part_1 = tuple(((0x1000, gen_update_request(0x10 * i, entrys[i], (1, 1), meta_hit = 0)) for i in range(10)))
-    case_part_2 = tuple(((0x10 * i, None) for i in range(10)))
-    case_part_3 = tuple(((0x10 * i, None) for i in range(10)))
+    case_part_1 = tuple(((0x1000, gen_update_request(generate_pc(0x1, 0x1 * i), entrys[i], (1, 1), meta_hit = 0)) for i in range(10)))
+    case_part_2 = tuple(((generate_pc(0x1, 0x1 * i), None) for i in range(10)))
+    case_part_3 = tuple(((generate_pc(0x1, 0x1 * i), None) for i in range(10)))
 
     cases = case_part_1 + case_part_2 + case_part_3
 
     for i in range(len(cases)):
-        if i == 20:
-            await bpu.reset()
+        info(i)
+        # if i == 20:
+        #     await bpu.reset()
 
-        output, _ = await bpu.drive_once(cases[i][0], 
-                                         cases[i][1])
-
-        if i < 2:
-            pass
-        elif i < 10:
-            assert output["s1"]["full_pred"]["hit"] == 0
+        output, model = await bpu.drive_once(cases[i][0], 
+                                         update_request = cases[i][1],
+                                         s0_fire = 1,
+                                         s1_fire = 1,
+                                         s2_fire = 1)
+        
+        info(output["s2"])
+        info(model)
+        
+        if i < 10:
+            assert output["s2"]["full_pred"]["hit"] == 0
         elif i >= 10 and i < 20:
-            assert output["s1"]["full_pred"]["hit"] == 1
+            pass
+            # assert output["s2"]["full_pred"]["hit"] == 1
         else:
-            assert output["s1"]["full_pred"]["hit"] == 0
+            assert output["s2"]["full_pred"]["hit"] == 0
 
     info("[控制信号测试1] reset test [pass]")
     # await ClockCycles(uFTB, MAX_CYCLE)

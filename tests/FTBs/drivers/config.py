@@ -2,7 +2,7 @@ PROGRAM_NAME = "microbench.bin"
 MAX_CYCLE = 30000
 
 import os
-ROOT_PATH = os.path.dirname(os.path.abspath(__file__)) + "/../.."
+ROOT_PATH = os.path.dirname(os.path.abspath(__file__)) + "/../../.."
 uFTB_DUT_PATH = ROOT_PATH + "/out/picker_out_uFTB"
 FTB_DUT_PATH = ROOT_PATH + "/out/picker_out_FTB"
 UTILS_PATH = ROOT_PATH + "/utils"

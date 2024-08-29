@@ -269,22 +269,22 @@ class BPUTop:
 
         self.uftb_model._process_update()
 
-        ## Redirect Request
-        if redirect_request:
-            self.next_s0_fire = 1
-            self.s1_flush = True
-            self.s2_flush = True
-            self.s3_flush = True
-            self.npc_gen = redirect_request["cfiUpdate"]["target"]
+        # ## Redirect Request
+        # if redirect_request:
+        #     self.next_s0_fire = 1
+        #     self.s1_flush = True
+        #     self.s2_flush = True
+        #     self.s3_flush = True
+        #     self.npc_gen = redirect_request["cfiUpdate"]["target"]
 
-        # Add new control information
-        self.s0_fire = self.next_s0_fire
-        self.s0_pc = self.npc_gen
-        if self.s1_flush:
-            self.s1_fire = 0
-        if self.s2_flush:
-            self.s2_fire = 0
-        if self.s3_flush:
-            self.s3_fire = 0
+        # # Add new control information
+        # self.s0_fire = self.next_s0_fire
+        # self.s0_pc = self.npc_gen
+        # if self.s1_flush:
+        #     self.s1_fire = 0
+        # if self.s2_flush:
+        #     self.s2_fire = 0
+        # if self.s3_flush:
+        #     self.s3_fire = 0
 
         return self.s0_pc

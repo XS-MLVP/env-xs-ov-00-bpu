@@ -52,7 +52,7 @@ class FullBranchPredirectionBundle(Bundle):
                "jalr_target"]
 
 class BranchPredictionBundle(Bundle):
-    signals = ["pc_0", "pc_1", "pc_2", "pc_3", "hasRedirect", "ftq_idx"]
+    # signals = ["pc_0", "pc_1", "pc_2", "pc_3", "hasRedirect", "ftq_idx"]
 
     def __init__(self):
         super().__init__()
@@ -64,7 +64,7 @@ class BranchPredictionResp(Bundle):
 
     def __init__(self):
         super().__init__()
-        self.s1 = BranchPredictionBundle.from_prefix("s1_")
+        # self.s1 = BranchPredictionBundle.from_prefix("s1_")
         self.s2 = BranchPredictionBundle.from_prefix("s2_")
         self.s3 = BranchPredictionBundle.from_prefix("s3_")
         self.last_stage_ftb_entry = FTBEntryBundle.from_prefix("last_stage_ftb_entry_")

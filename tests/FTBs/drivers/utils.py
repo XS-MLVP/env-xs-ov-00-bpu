@@ -79,6 +79,10 @@ def parse_uftb_meta(meta):
 def reconstruct_uftb_meta(pred_way, hit):
     return (pred_way << 1) | hit
 
+def generate_pc(tag, idx):
+    pc = (tag << 10) | (idx << 1) # 将 tag 左移 10 位,idx 左移 1 位,然后进行位或操作
+    return pc
+
 def gen_update_request(pc, new_ftb_entry, br_taken_mask, valid: bool = True, meta_hit: int = -1, meta_writeWay: int = 0):
     update_request = {}
 

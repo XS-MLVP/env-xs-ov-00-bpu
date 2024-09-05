@@ -1,4 +1,5 @@
 from mlvp import *
+from mlvp.triggers import *
 from .bundle import *
 from .ftq import *
 from .uftb_model import uFTBModel

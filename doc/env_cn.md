@@ -74,13 +74,13 @@ if __name__ == "__main__":
     # Create DUT
     uftb = DUTFauFTB()
     # Init DUT with clock pin name
-    uftb.init_clock("clock")
+    uftb.InitClock("clock")
 
     # Your testcases here
     # ...
 
     # Destroy DUT
-    utb.finalize()
+    utb.Finish()
 ```
 
 其他待验证模块，例如 TAGE-SC，FTB也可以通过类似命令生成。
@@ -166,7 +166,7 @@ def test_mydut(request):
     # ...
 
     # 结束测试，并录入覆盖率信息，覆盖率文件名称应该与上述指定的覆盖率文件名称相同
-    my_dut.finalize()
+    my_dut.Finish()
     set_func_coverage(request, [g1, g2])
     set_line_coverage(request, "my_test_coverage.dat")
 ```
@@ -218,7 +218,7 @@ def setup_logging(
 
 **2. 阅读代码，封装并驱动DUT。** 代码中包含了所有实现细节，基于其可对DUT的基本功能封装为一个个函数。然后测试这些函数功能是否正常。
 
-**3. 根据测试点编写对应测试用例。** 基于测点和DUT基本功能函数，完成绝大部分功能的测试。（**不要一来就写参考模型**） 
+**3. 根据测试点编写对应测试用例。** 基于测点和DUT基本功能函数，完成绝大部分功能的测试。（**不要一来就写参考模型**）
 
 **4. 编写参考模型。** 当所有基本功能点都测试完成后，再基于自己理解完成参考模型编写。（如果所有功能点都完成测试，且功能、代码行覆盖率已达到要求，可忽略参考模型）
 

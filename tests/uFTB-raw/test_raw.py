@@ -57,7 +57,7 @@ def test_raw(request):
         print("main", pred[0], pred[1].__dict__)
         uFTB.Step(1)
 
-    uFTB.finalize()
+    uFTB.Finish()
 
     set_line_coverage(request, "report/uftb_raw_coverage.dat")
 

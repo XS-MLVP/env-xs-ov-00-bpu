@@ -1,4 +1,4 @@
-from mlvp.modules import PLRU, TwoBitsCounter
+from mlvp.utils import PLRU, TwoBitsCounter
 from mlvp import *
 from .ftb import *
 

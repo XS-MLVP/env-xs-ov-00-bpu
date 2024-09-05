@@ -150,10 +150,10 @@ class FauFTB(DUTFauFTB):
         self.io_out_s1_full_pred = self.Io_out_s1_full_pred(self)
         self._io_out_last_stage_meta = self.Io_out_last_stage_meta(self)
         self.io_update_bits_ftb_entry = self.Io_update_bits_ftb_entry(self)
-        self.init_clock("clock")
+        self.InitClock("clock")
 
     def finalize(self):
-        super().finalize()
+        super().Finish()
 
     def check_dup_equation(self, *inputs):
         return all(i == inputs[0] for i in inputs)

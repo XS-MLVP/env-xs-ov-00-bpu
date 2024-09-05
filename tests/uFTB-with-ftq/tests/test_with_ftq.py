@@ -1,5 +1,6 @@
 import mlvp
-import logging
+import pytest
+from mlvp.triggers import *
 
 import os
 os.sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
@@ -12,8 +13,6 @@ os.sys.path.append(DUT_PATH)
 
 from UT_FauFTB import *
 
-
-
 def set_imm_mode(uFTB):
     imm_mode = uFTB.io_s0_fire_0.xdata.Imme
     need_to_write_imm = ["io_s0_fire_0", "io_s0_fire_1", "io_s0_fire_2", "io_s0_fire_3",
@@ -23,27 +22,31 @@ def set_imm_mode(uFTB):
         getattr(uFTB, name).xdata.SetWriteMode(imm_mode)
 
 
-async def uftb_test(uFTB):
+@pytest.mark.mlvp_async
+async def test_uftb(mlvp_request):
+    uFTB = mlvp_request
+    set_imm_mode(uFTB)
+
     uFTB_update = UpdateBundle.from_prefix("io_update_").set_name("uFTB_update").bind(uFTB)
     uFTB_out = BranchPredictionResp.from_prefix("io_out_").set_name("uFTB_out").bind(uFTB)
     pipeline_ctrl = PipelineCtrlBundle.from_prefix("io_").set_name("pipeline_ctrl").bind(uFTB)
     enable_ctrl = EnableCtrlBundle.from_prefix("io_ctrl_").set_name("enable_ctrl").bind(uFTB)
 
-    mlvp.create_task(mlvp.start_clock(uFTB))
+    mlvp.start_clock(uFTB)
     mlvp.create_task(BPUTop(uFTB, uFTB_out, uFTB_update, pipeline_ctrl, enable_ctrl).run())
 
     await ClockCycles(uFTB, MAX_CYCLE)
 
-
+    pred_stat.summary()
 
 import mlvp.funcov as fc
 from mlvp.reporter import *
+from mlvp import PreRequest
 
-def test_uftb(request):
-    # Create DUT
-    uFTB = DUTFauFTB(waveform_filename="report/uftb_with_ftq.fst", coverage_filename="report/uftb_with_ftq_coverage.dat")
-    uFTB.init_clock("clock")
-    set_imm_mode(uFTB)
+@pytest.fixture()
+def mlvp_request(mlvp_pre_request: PreRequest):
+    mlvp.setup_logging(mlvp.INFO)
+    uFTB = mlvp_pre_request.create_dut(DUTFauFTB, "clock")
 
     # Set Coverage
     g1 = fc.CovGroup("interaction")
@@ -63,15 +66,6 @@ def test_uftb(request):
     g2.add_watch_point(uFTB.io_out_s1_full_pred_0_br_taken_mask_1, { "br_taken_mask_1": fc.Eq(1), "br_taken_mask_1_invalid": fc.Eq(0) }, name="s1_full_pred_0_br_taken_mask_1")
     g2.add_watch_point(uFTB.io_out_s1_full_pred_0_is_br_sharing, { "is_br_sharing": fc.Eq(1), "is_br_sharing_invalid": fc.Eq(0) }, name="s1_full_pred_0_is_br_sharing")
 
-    uFTB.xclock.StepRis(lambda _: g1.sample())
-    uFTB.xclock.StepRis(lambda _: g2.sample())
+    mlvp_pre_request.add_cov_groups([g1, g2])
 
-    # Run the test
-    mlvp.setup_logging(log_level=logging.INFO, log_file="report/uftb_with_ftq.log")
-    mlvp.run(uftb_test(uFTB))
-    uFTB.finalize()
-
-    pred_stat.summary()
-    set_func_coverage(request, [g1, g2])
-    set_line_coverage(request, "report/uftb_with_ftq_coverage.dat")
-
+    return uFTB

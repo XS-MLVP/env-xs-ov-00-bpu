@@ -15,7 +15,7 @@ def generate_new_ftb_entry(is_sharing: int = 1,
                            tail_inst_len: int = 4,):
     ftb_entry = FTBEntry()
 
-    ftb_entry.valid = True
+    ftb_entry.valid = 1
     if is_sharing:
         ftb_entry.add_cond_branch_inst(br_0_start_pc, 
                                        br_0_inst_pc, 
@@ -62,7 +62,7 @@ class FTBSlot:
 
 class FTBEntry:
     def __init__(self):
-        self.valid = 0
+        self.valid = 1
         self.brSlot = FTBSlot()
         self.tailSlot = FTBSlot()
         self.pftAddr = 0
@@ -135,6 +135,7 @@ class FTBEntry:
 
     def __dict__(self):
         return {
+            "valid": self.valid,
             "brSlots_0_offset": self.brSlot.offset,
             "brSlots_0_lower": self.brSlot.lower,
             "brSlots_0_tarStat": self.brSlot.tarStart,

@@ -20,8 +20,7 @@ class IoInBundle(Bundle):
         self.prediction_input = PredictionInputBundle.from_regex(r"bits_resp_in_0_s\d_full_pred_\d_(.*)")
     
 class EnableCtrlBundle(Bundle):
-    signals = ["ubtb_enable", "btb_enable", "bim_enable", "tage_enable",
-               "sc_enable", "ras_enable", "loop_enable"]
+    signals = ["btb_enable"]
 
 
 class FTBEntryBundle(Bundle):

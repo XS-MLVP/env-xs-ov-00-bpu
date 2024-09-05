@@ -82,26 +82,39 @@ async def run(FTB):
     bpu = BPUTop(FTB, FTB_out, FTB_update, pipeline_ctrl, enable_ctrl, io_in)
 
     mlvp.create_task(mlvp.start_clock(FTB))
+
     await control_signal_test_1(bpu)
+    await control_signal_test_2(bpu)
+    await control_signal_test_3(bpu)
+    await ctest(bpu)
+    # await control_signal_test_4(bpu)
+    # await control_signal_test_5(bpu)
 
 
-    await ClockCycles(FTB, MAX_CYCLE)
+    # await ClockCycles(FTB, MAX_CYCLE)
 
 async def control_signal_test_1(bpu):
     await bpu.reset()
 
-    entrys = tuple((generate_new_ftb_entry() for _ in range(10)))
+    radix = 4
+    entrys = tuple((generate_new_ftb_entry(is_0_taken=0, is_1_taken=0) for _ in range(radix)))
 
-    case_part_1 = tuple(((0x1000, gen_update_request(generate_pc(0x1, 0x1 * i), entrys[i], (1, 1), meta_hit = 0)) for i in range(10)))
-    case_part_2 = tuple(((generate_pc(0x1, 0x1 * i), None) for i in range(10)))
-    case_part_3 = tuple(((generate_pc(0x1, 0x1 * i), None) for i in range(10)))
+    case_part_1 = tuple((0x10000, 
+                          gen_update_request(generate_pc(0x1, 0x1 * i), 
+                                             entrys[i], 
+                                             (1, 1), 
+                                             meta_hit = 0, 
+                                             old_entry = 0,
+                                             meta_writeWay=0)) for i in range(radix))
+    case_part_2 = tuple(((generate_pc(0x1, 0x1 * i), None) for i in range(radix)))
+    case_part_3 = tuple(((generate_pc(0x1, 0x1 * i), None) for i in range(radix)))
 
     cases = case_part_1 + case_part_2 + case_part_3
 
+
     for i in range(len(cases)):
-        info(i)
-        # if i == 20:
-        #     await bpu.reset()
+        if i == radix * 2:
+            await bpu.reset()
 
         output, model = await bpu.drive_once(cases[i][0], 
                                          update_request = cases[i][1],
@@ -109,16 +122,281 @@ async def control_signal_test_1(bpu):
                                          s1_fire = 1,
                                          s2_fire = 1)
         
-        info(output["s2"])
-        info(model)
-        
-        if i < 10:
-            assert output["s2"]["full_pred"]["hit"] == 0
-        elif i >= 10 and i < 20:
-            pass
-            # assert output["s2"]["full_pred"]["hit"] == 1
+        if i < radix:
+            assert bpu.dut_out.s2.full_pred.hit.value == 0
+            assert bpu.dut_out.s3.full_pred.hit.value == 0
+            await ClockCycles(bpu.dut, 2)
+        elif i >= radix and i < radix + 1:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut_out.s2.full_pred.hit.value == 1
+            assert bpu.dut_out.s3.full_pred.hit.value == 0
+        elif i >= radix + 1 and i < radix * 2:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut_out.s2.full_pred.hit.value == 1
+            assert bpu.dut_out.s3.full_pred.hit.value == 1
         else:
-            assert output["s2"]["full_pred"]["hit"] == 0
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut_out.s2.full_pred.hit.value == 0
+            assert bpu.dut_out.s3.full_pred.hit.value == 0
 
     info("[控制信号测试1] reset test [pass]")
-    # await ClockCycles(uFTB, MAX_CYCLE)
+
+async def control_signal_test_2(bpu):
+    await bpu.reset()
+
+    radix = 4
+    entrys = tuple((generate_new_ftb_entry(is_0_taken=0, is_1_taken=0) for _ in range(radix)))
+
+    case_part_1 = tuple((0x10000, 
+                          gen_update_request(generate_pc(0x1, 0x1 * i), 
+                                             entrys[i], 
+                                             (1, 1), 
+                                             meta_hit = 0, 
+                                             old_entry = 0,
+                                             meta_writeWay=0),
+                          1) for i in range(radix))
+    case_part_2 = tuple(((generate_pc(0x1, 0x1 * i), None, 1) for i in range(radix)))
+    case_part_3 = tuple(((generate_pc(0x1, 0x1 * i), None, 0) for i in range(radix)))
+
+    cases = case_part_1 + case_part_2 + case_part_3
+
+
+    for i in range(len(cases)):
+        output, model = await bpu.drive_once(cases[i][0], 
+                                         update_request = cases[i][1],
+                                         s0_fire = 1,
+                                         s1_fire = 1,
+                                         s2_fire = 1,
+                                         btb_enable = cases[i][2])
+        
+        if i < radix:
+            assert bpu.dut_out.s2.full_pred.hit.value == 0
+            assert bpu.dut_out.s3.full_pred.hit.value == 0
+        elif i >= radix and i < radix + 1:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut_out.s2.full_pred.hit.value == 1
+            assert bpu.dut_out.s3.full_pred.hit.value == 0
+        elif i >= radix + 1 and i < radix * 2:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut_out.s2.full_pred.hit.value == 1
+            assert bpu.dut_out.s3.full_pred.hit.value == 1
+        else:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut_out.s2.full_pred.hit.value == 0
+            assert bpu.dut_out.s3.full_pred.hit.value == 0
+
+    info("[控制信号测试2] io_ctrl_btb_enable test [pass]")
+
+async def control_signal_test_3(bpu):
+    await bpu.reset()
+
+    radix = 1
+    entrys = tuple((generate_new_ftb_entry(is_0_taken=0, is_1_taken=0) for _ in range(radix)))
+
+    case_part_1 = tuple((0x10000, 
+                          gen_update_request(generate_pc(0x1, 0x1 * i), 
+                                             entrys[i], 
+                                             (1, 1), 
+                                             meta_hit = 0, 
+                                             old_entry = 0,
+                                             meta_writeWay=0),
+                          1, 1, 1) for i in range(radix))
+    case_part_2 = tuple(((generate_pc(0x1, 0x1 * i), None, 0, 0, 0) for i in range(radix)))
+    case_part_3 = tuple(((generate_pc(0x1, 0x1 * i), None, 0, 0, 1) for i in range(radix)))
+    case_part_4 = tuple(((generate_pc(0x1, 0x1 * i), None, 0, 1, 0) for i in range(radix)))
+    case_part_5 = tuple(((generate_pc(0x1, 0x1 * i), None, 0, 1, 1) for i in range(radix)))
+    case_part_6 = tuple(((generate_pc(0x1, 0x1 * i), None, 1, 1, 1) for i in range(radix)))
+    case_part_7 = tuple(((generate_pc(0x1, 0x1 * i), None, 1, 0, 0) for i in range(radix)))
+    case_part_8 = tuple(((generate_pc(0x1, 0x1 * i), None, 1, 0, 1) for i in range(radix)))
+    case_part_9 = tuple(((generate_pc(0x1, 0x1 * i), None, 1, 1, 0) for i in range(radix)))
+    case_part_10 = tuple(((generate_pc(0x1, 0x1 * i), None, 1, 1, 1) for i in range(radix)))
+    case_part_11 = tuple(((generate_pc(0x1, 0x1 * i), None, 0, 1, 1) for i in range(radix)))
+
+    cases = case_part_1 + case_part_2 + case_part_3 + \
+            case_part_4 + case_part_5 + case_part_6 + \
+            case_part_7 + case_part_8 + case_part_9 + \
+            case_part_10 + case_part_11
+
+
+    for i in range(len(cases)):
+        
+        output, model = await bpu.drive_once(cases[i][0], 
+                                         update_request = cases[i][1],
+                                         s0_fire = cases[i][2],
+                                         s1_fire = cases[i][3],
+                                         s2_fire = cases[i][4],)
+        
+        if i < 1:
+            assert bpu.dut_out.s2.full_pred.hit.value == 0
+            assert bpu.dut_out.s3.full_pred.hit.value == 0
+            await ClockCycles(bpu.dut, 2)
+        elif i >= 1 and i < 5:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut_out.s2.full_pred.hit.value == 0
+            assert bpu.dut_out.s3.full_pred.hit.value == 0
+        elif i >= 5 and i < 6:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut_out.s2.full_pred.hit.value == 1
+            assert bpu.dut_out.s3.full_pred.hit.value == 1
+        elif i >= 6 and i < 7:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut_out.s2.full_pred.hit.value == 0
+            assert bpu.dut_out.s3.full_pred.hit.value == 1
+        elif i >= 7 and i < 8:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut_out.s2.full_pred.hit.value == 0
+            assert bpu.dut_out.s3.full_pred.hit.value == 0
+        elif i >= 8 and i < 9:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut_out.s2.full_pred.hit.value == 1
+            assert bpu.dut_out.s3.full_pred.hit.value == 0
+        else:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut_out.s2.full_pred.hit.value == 1
+            assert bpu.dut_out.s3.full_pred.hit.value == 1
+
+    info("[控制信号测试3] io_s0_fire_0 test [pass]")
+
+async def control_signal_test_4(bpu):
+    await bpu.reset()
+
+    radix = 1
+    entrys = tuple((generate_new_ftb_entry(is_0_taken=0, is_1_taken=0) for _ in range(radix)))
+
+    case_part_0 = tuple((0x11000, 
+                          gen_update_request(generate_pc(0x1, 0x1 * i), 
+                                             entrys[i], 
+                                             (1, 1), 
+                                             meta_hit = 0, 
+                                             old_entry = 0,
+                                             meta_writeWay=0),
+                          1, 1, 1) for i in range(radix))
+    case_part_1 = tuple(((generate_pc(0x1, 0x1 * i), None, 1, 0, 0) for i in range(radix)))
+    case_part_2 = tuple(((generate_pc(0x1, 0x1 * i), None, 1, 0, 1) for i in range(radix)))
+    case_part_3 = tuple(((generate_pc(0x1, 0x1 * i), None, 1, 1, 0) for i in range(radix)))
+    case_part_4 = tuple(((generate_pc(0x1, 0x1 * i), None, 1, 1, 1) for i in range(radix)))
+    case_part_5 = tuple(((generate_pc(0x1, 0x1 * i), None, 0, 1, 1) for i in range(radix)))
+    case_part_6 = tuple(((generate_pc(0x1, 0x1 * i), None, 0, 0, 0) for i in range(radix)))
+    case_part_7 = tuple(((generate_pc(0x1, 0x1 * i), None, 1, 0, 0) for i in range(radix)))
+
+    cases = case_part_0 + case_part_1 + case_part_2 + case_part_3 + \
+            case_part_4 + case_part_5 + case_part_6 + case_part_7
+            
+    for i in range(len(cases)):
+        # info(i)
+        output, model = await bpu.drive_once(cases[i][0], 
+                                         update_request = cases[i][1],
+                                         s0_fire = cases[i][2],
+                                         s1_fire = cases[i][3],
+                                         s2_fire = cases[i][4],)
+        
+        if i < 1:
+            # await ClockCycles(bpu.dut, 2)
+            # assert bpu.dut.io_out_s2_full_pred_0_hit.value == 0
+            # assert bpu.dut.io_out_s3_full_pred_0_hit.value == 0
+            await ClockCycles(bpu.dut, 2)
+        elif i >= 1 and i < 3:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut.io_out_s2_full_pred_0_hit.value == 0
+            assert bpu.dut.io_out_s3_full_pred_0_hit.value == 0
+        elif i >= 3 and i < 4:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut.io_out_s2_full_pred_0_hit.value == 1
+            assert bpu.dut.io_out_s3_full_pred_0_hit.value == 0
+        else:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut.io_out_s2_full_pred_0_hit.value == 1
+            assert bpu.dut.io_out_s3_full_pred_0_hit.value == 1
+
+    info("[控制信号测试4] io_s(1、2)_fire_0 test [pass]")
+
+async def ctest(bpu):
+    await bpu.reset()
+
+    radix = 1
+    entrys = tuple((generate_new_ftb_entry(is_0_taken=0, is_1_taken=0) for _ in range(radix)))
+
+    case_part_0 = tuple((0x11000, 
+                          gen_update_request(generate_pc(0x1, 0x1 * i), 
+                                             entrys[i], 
+                                             (1, 1), 
+                                             meta_hit = 0, 
+                                             old_entry = 0,
+                                             meta_writeWay=0),
+                          1, 1, 1) for i in range(radix))
+
+    cases = case_part_0
+            
+    for i in range(len(cases)):
+        # info(i)
+        output, model = await bpu.drive_once(cases[i][0], 
+                                         update_request = cases[i][1],
+                                         s0_fire = cases[i][2],
+                                         s1_fire = cases[i][3],
+                                         s2_fire = cases[i][4],)
+
+    await ClockCycles(bpu.dut, 10)
+
+    info("[控制信号测试4] io_s(1、2)_fire_0 test [pass]")
+
+async def control_signal_test_5(bpu):
+    await bpu.reset()
+
+    radix = 4
+    entrys = tuple((generate_new_ftb_entry(is_0_taken=0, is_1_taken=0) for _ in range(radix)))
+
+    case_part_0 = tuple((0x11000, 
+                          gen_update_request(generate_pc(0x1 * i, 0x1), 
+                                             entrys[i], 
+                                             (1, 1), 
+                                             meta_hit = 0, 
+                                             old_entry = 0,
+                                             meta_writeWay=0),
+                          1, 0, 0) for i in range(radix))
+    case_part_1 = tuple(((generate_pc(0x1 * i, 0x1), None, 1, 1, 0) for i in range(radix)))
+    case_part_2 = tuple(((generate_pc(0x1 * i, 0x1), None, 1, 0, 1) for i in range(radix))) 
+    case_part_3 = tuple(((generate_pc(0x1 * i, 0x1), None, 1, 1, 1) for i in range(radix))) 
+
+    cases = case_part_0 + case_part_1 + case_part_2 + case_part_3
+            
+    for i in range(len(cases)):
+
+        output, model = await bpu.drive_once(cases[i][0], 
+                                         update_request = cases[i][1],
+                                         s0_fire = cases[i][2],
+                                         s1_fire = cases[i][3],
+                                         s2_fire = cases[i][4],)
+        
+        if i < 8:
+            meta = parse_uftb_meta(bpu.dut_out.last_stage_meta.value)
+            assert meta['pred_way'] == 0
+            assert meta['hit'] == 1
+            await ClockCycles(bpu.dut, 2)
+        elif i >= 8 and i < 12:
+            await ClockCycles(bpu.dut, 2)
+            meta = parse_uftb_meta(bpu.dut_out.last_stage_meta.value)
+            assert meta['pred_way'] == 3
+            assert meta['hit'] == 1
+        elif i == 12:
+            await ClockCycles(bpu.dut, 2)
+            meta = parse_uftb_meta(bpu.dut_out.last_stage_meta.value)
+            assert meta['pred_way'] == 0
+            assert meta['hit'] == 1
+        elif i == 13:
+            await ClockCycles(bpu.dut, 2)
+            meta = parse_uftb_meta(bpu.dut_out.last_stage_meta.value)
+            assert meta['pred_way'] == 1
+            assert meta['hit'] == 1
+        elif i == 14:
+            await ClockCycles(bpu.dut, 2)
+            meta = parse_uftb_meta(bpu.dut_out.last_stage_meta.value)
+            assert meta['pred_way'] == 2
+            assert meta['hit'] == 1
+        elif i == 15:
+            await ClockCycles(bpu.dut, 2)
+            meta = parse_uftb_meta(bpu.dut_out.last_stage_meta.value)
+            assert meta['pred_way'] == 3
+            assert meta['hit'] == 1
+
+
+    info("[控制信号测试5] last_stage_meta test [pass]")

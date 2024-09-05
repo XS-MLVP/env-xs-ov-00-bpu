@@ -76,18 +76,20 @@ def parse_uftb_meta(meta):
         "hit": meta & 1
     }
 
-def reconstruct_uftb_meta(pred_way, hit):
+def reconstruct_uftb_meta(hit, pred_way):
     return (pred_way << 1) | hit
 
 def generate_pc(tag, idx):
     pc = (tag << 10) | (idx << 1) # 将 tag 左移 10 位,idx 左移 1 位,然后进行位或操作
     return pc
 
-def gen_update_request(pc, new_ftb_entry, br_taken_mask, valid: bool = True, meta_hit: int = -1, meta_writeWay: int = 0):
+def gen_update_request(pc, new_ftb_entry, br_taken_mask, valid: bool = True, meta_hit: int = -1, meta_writeWay: int = 0, old_entry: int = -1):
     update_request = {}
 
     update_request["valid"] = valid
     update_request["bits_pc"] = pc
+    if not meta_hit == -1:
+        update_request["bits_old_entry"] = old_entry
     if not meta_hit == -1:
         update_request["bits_meta"] = reconstruct_uftb_meta(meta_hit, meta_writeWay);
     update_request["ftb_entry"] = new_ftb_entry.__dict__()

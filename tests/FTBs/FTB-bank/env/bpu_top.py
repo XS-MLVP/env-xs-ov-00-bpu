@@ -51,7 +51,12 @@ class BPUTop:
         self.ftb_model = FTBBank()
         self.ftb_provider = FTBProvider()
 
-    def pipeline_assign(self, s0_f, s1_f, s2_f, s0_pc, btb_enable):
+    def pipeline_assign(self, s0_f, s1_f, s2_f, s0_pc, btb_enable, s1_ready: int = 1):
+
+        # self.pipeline_ctrl.s1_ready.value = s1_ready
+        # self.dut.io_s1_ready.value = s1_ready
+        # assert_equal(self.dut.io_s1_ready.value, s1_ready)
+
         self.pipeline_ctrl.s0_fire_0.value = s0_f
         self.pipeline_ctrl.s0_fire_1.value = s0_f
         self.pipeline_ctrl.s0_fire_2.value = s0_f
@@ -82,10 +87,6 @@ class BPUTop:
         assert_equal(self.dut.io_s2_fire_2.value, s2_f)
         assert_equal(self.dut.io_s2_fire_3.value, s2_f)
 
-        # Set the value to 1 forcibly to obtain meta information
-        self.dut.io_s1_fire_0.value = s1_f
-        self.dut.io_s2_fire_0.value = s2_f
-
         self.dut.io_in_bits_s0_pc_0.value = s0_pc
         self.dut.io_in_bits_s0_pc_1.value = s0_pc
         self.dut.io_in_bits_s0_pc_2.value = s0_pc
@@ -97,6 +98,7 @@ class BPUTop:
         assert_equal(self.dut.io_in_bits_s0_pc_3.value, s0_pc)
 
         self.enable_ctrl.btb_enable.value = btb_enable
+        
         assert_equal(self.dut.io_ctrl_btb_enable.value, btb_enable) 
 
     def generate_bpu_output(self, dut_output):
@@ -139,12 +141,17 @@ class BPUTop:
 
         return dut_output
 
-    async def reset(self):
+    async def reset(self, no_wait: bool = False):
         self.dut.reset.value = 1
         await ClockCycles(self.dut, 1)
         self.dut.reset.value = 0
         await ClockCycles(self.dut, 1)
         self.ftb_model = FTBBank()
+        if not no_wait:
+            await self.wait_sram()
+
+    async def wait_sram(self):
+        await ClockCycles(self.dut, SRAM_READY_DELAY)
 
     def step_assign(self):
         self.s3_fire = self.s2_fire
@@ -191,15 +198,17 @@ class BPUTop:
         # assert_equal(dut_s2_hit, model_s2_hit, key = "s2_hit")
         # assert_equal(dut_s3_hit, model_s3_hit, key = "s3_hit")
 
-        if model_s2_hit or dut_s2_hit:
-            model_s2_full_pred = {}
-            s2_read_resp.put_to_full_pred_dict(self.s1_pc, model_s2_full_pred)
-            # compare_uftb_full_pred(bpu_output["s2"]["full_pred"], model_s2_full_pred)
+        # if model_s2_hit or dut_s2_hit:
+        #     model_s2_full_pred = {}
+        #     s2_read_resp.put_to_full_pred_dict(self.s1_pc, model_s2_full_pred)
+        #     # compare_uftb_full_pred(bpu_output["s2"]["full_pred"], model_s2_full_pred)
 
-        if model_s3_hit or dut_s3_hit:
-            model_s3_full_pred = {}
-            s3_read_resp.put_to_full_pred_dict(self.s2_pc, model_s3_full_pred)
-            # compare_uftb_full_pred(bpu_output["s3"]["full_pred"], model_s3_full_pred)
+        # if model_s3_hit or dut_s3_hit:
+        #     model_s3_full_pred = {}
+        #     if s3_read_resp is not None:
+        #         # todo 这里有问题
+        #         s3_read_resp.put_to_full_pred_dict(self.s2_pc, model_s3_full_pred)
+        #     # compare_uftb_full_pred(bpu_output["s3"]["full_pred"], model_s3_full_pred)
 
         if self.s3_fire:
             # debug(bin(self.dut.io_out_last_stage_meta.value))
@@ -216,17 +225,20 @@ class BPUTop:
         
         return bpu_output, (s2_read_resp, s2_read_hits, s3_read_resp, s3_read_hits), std_ftb_entry
 
-    async def one_step_stage_two(self, update_request, redirect_request):
+    def update_assign(self, update_request, redirect_request):
         ## Update Request
-        if update_request:
+        # info(update_request)
+        if update_request is not None:
             self.dut_update.valid.value = 1
             self.ftb_model.update(update_request)
             self.ftb_provider.update(update_request)
             del update_request['bits_br_taken_mask_0']
             del update_request['bits_br_taken_mask_1']
             self.dut_update.assign(update_request)
+            assert_equal(self.dut.io_update_valid.value, 1)
         else:
             self.dut_update.valid.value = 0
+            assert_equal(self.dut.io_update_valid.value, 0)
 
         # ## Redirect Request
         # if redirect_request:
@@ -279,12 +291,13 @@ class BPUTop:
         self.s1_fire = s1_fire
         self.s2_fire = s2_fire
         self.pipeline_assign(s0_fire, s1_fire, s2_fire, s0_pc, btb_enable)
+        self.update_assign(update_request, redirect_request)
 
         await ClockCycles(self.dut, 1)
 
         bpu_output, module_output, std_ftb_entry = await self.one_step_stage_one()
         # update_request, redirect_request = self.ftq.update(bpu_output, std_ftb_entry)
-        await self.one_step_stage_two(update_request, redirect_request)
+        # await self.one_step_stage_two(update_request, redirect_request)
 
         self.ftb_model.btb_enable = btb_enable
 

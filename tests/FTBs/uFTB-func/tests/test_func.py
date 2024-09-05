@@ -110,7 +110,7 @@ async def run(uFTB):
     await ftb_update_test_4(bpu)
     # await set_io_out_test(bpu)
 
-    await ClockCycles(uFTB, MAX_CYCLE)
+    # await ClockCycles(uFTB, MAX_CYCLE)
 
 
 async def control_signal_test_1(bpu):

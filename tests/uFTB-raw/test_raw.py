@@ -32,15 +32,14 @@ def set_update(uFTB: FauFTB, entry: Tuple[int, FTBEntry, bool, bool]):
     uFTB.update_ftb_entry(entry[0], entry[1], (entry[2], entry[3]))
 
 
+from mlvp import *
 import mlvp.funcov as fc
 from mlvp.reporter import *
 
 
-def test_raw(request):
+def test_raw(mlvp_request):
+    uFTB: FauFTB = mlvp_request
 
-    uFTB: FauFTB = FauFTB(
-        waveform_filename="report/uftb_raw.fst", coverage_filename="report/uftb_raw_coverage.dat"
-    )
     ftb_entry_list()
     uFTB.reset.value = 1
     uFTB.Step(100)
@@ -57,10 +56,7 @@ def test_raw(request):
         print("main", pred[0], pred[1].__dict__)
         uFTB.Step(1)
 
-    uFTB.Finish()
-
-    set_line_coverage(request, "report/uftb_raw_coverage.dat")
-
-
-if __name__ == "__main__":
-    test_raw()
+import pytest
+@pytest.fixture()
+def mlvp_request(mlvp_pre_request: PreRequest):
+    return mlvp_pre_request.create_dut(FauFTB, "clock")

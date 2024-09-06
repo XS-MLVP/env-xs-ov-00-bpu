@@ -89,18 +89,18 @@ class FauFTB(DUTFauFTB):
 
             self.resp_meta_hit_r_1 = xsp.XPin(
                 outer_instance.io_out_last_stage_meta.xdata.SubDataRef(
-                    "resp_meta_hit_r_1",
                     0,
-                    0
+                    0,
+                    "resp_meta_hit_r_1"
                 ),
                 outer_instance.event,
             )
 
             self.resp_meta_pred_way_r_1 = xsp.XPin(
                 outer_instance.io_out_last_stage_meta.xdata.SubDataRef(
-                    "resp_meta_pred_way_r_1",
                     1,
-                    5
+                    5,
+                    "resp_meta_pred_way_r_1"
                 ),
                 outer_instance.event,
             )
@@ -150,10 +150,6 @@ class FauFTB(DUTFauFTB):
         self.io_out_s1_full_pred = self.Io_out_s1_full_pred(self)
         self._io_out_last_stage_meta = self.Io_out_last_stage_meta(self)
         self.io_update_bits_ftb_entry = self.Io_update_bits_ftb_entry(self)
-        self.InitClock("clock")
-
-    def finalize(self):
-        super().Finish()
 
     def check_dup_equation(self, *inputs):
         return all(i == inputs[0] for i in inputs)

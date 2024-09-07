@@ -22,8 +22,8 @@ def set_imm_mode(FTB):
     need_to_write_imm = ["io_s0_fire_0", "io_s0_fire_1", "io_s0_fire_2", "io_s0_fire_3",
                         "io_s1_fire_0", "io_s2_fire_0", "io_in_bits_s0_pc_0", "io_in_bits_s0_pc_1",
                         "io_in_bits_s0_pc_2", "io_in_bits_s0_pc_3", "reset"]
-    for name in need_to_write_imm:
-        getattr(FTB, name).xdata.SetWriteMode(imm_mode)
+    # for name in need_to_write_imm:
+    #     getattr(FTB, name).xdata.SetWriteMode(imm_mode)
 
 import mlvp.funcov as fc
 from mlvp.reporter import *
@@ -86,10 +86,9 @@ async def run(FTB):
     await control_signal_test_1(bpu)
     await control_signal_test_2(bpu)
     await control_signal_test_3(bpu)
-    await ctest(bpu)
-    # await control_signal_test_4(bpu)
-    # await control_signal_test_5(bpu)
-
+    # await ctest(bpu)
+    await control_signal_test_4(bpu)
+    await control_signal_test_5(bpu)
 
     # await ClockCycles(FTB, MAX_CYCLE)
 
@@ -237,25 +236,57 @@ async def control_signal_test_3(bpu):
         elif i >= 5 and i < 6:
             await ClockCycles(bpu.dut, 2)
             assert bpu.dut_out.s2.full_pred.hit.value == 1
-            assert bpu.dut_out.s3.full_pred.hit.value == 1
+            assert bpu.dut_out.s3.full_pred.hit.value == 0
         elif i >= 6 and i < 7:
             await ClockCycles(bpu.dut, 2)
-            assert bpu.dut_out.s2.full_pred.hit.value == 0
+            assert bpu.dut_out.s2.full_pred.hit.value == 1
             assert bpu.dut_out.s3.full_pred.hit.value == 1
         elif i >= 7 and i < 8:
             await ClockCycles(bpu.dut, 2)
-            assert bpu.dut_out.s2.full_pred.hit.value == 0
-            assert bpu.dut_out.s3.full_pred.hit.value == 0
+            assert bpu.dut_out.s2.full_pred.hit.value == 1
+            assert bpu.dut_out.s3.full_pred.hit.value == 1
         elif i >= 8 and i < 9:
             await ClockCycles(bpu.dut, 2)
             assert bpu.dut_out.s2.full_pred.hit.value == 1
-            assert bpu.dut_out.s3.full_pred.hit.value == 0
-        else:
+            assert bpu.dut_out.s3.full_pred.hit.value == 1
+        elif i < 11:
             await ClockCycles(bpu.dut, 2)
             assert bpu.dut_out.s2.full_pred.hit.value == 1
             assert bpu.dut_out.s3.full_pred.hit.value == 1
 
     info("[控制信号测试3] io_s0_fire_0 test [pass]")
+
+async def ctest(bpu):
+    await bpu.reset()
+
+    radix = 1
+    entrys = tuple((generate_new_ftb_entry(is_0_taken=0, is_1_taken=0) for _ in range(radix)))
+
+    case_part_0 = tuple((0x11000, 
+                          gen_update_request(generate_pc(0x1, 0x1 * i), 
+                                             entrys[i], 
+                                             (1, 1), 
+                                             meta_hit = 0, 
+                                             old_entry = 0,
+                                             meta_writeWay=0),
+                          1, 0, 1) for i in range(radix))
+
+    cases = case_part_0
+            
+    for i in range(len(cases)):
+        # info(i)
+        output, model = await bpu.drive_once(cases[i][0], 
+                                         update_request = cases[i][1],
+                                         s0_fire = cases[i][2],
+                                         s1_fire = cases[i][3],
+                                         s2_fire = cases[i][4],)
+        
+        info(bpu.dut.io_out_s2_full_pred_0_hit.value)
+        info(bpu.dut.io_out_s3_full_pred_0_hit.value)
+
+    await ClockCycles(bpu.dut, 10)
+
+    info("[控制信号测试4] io_s(1、2)_fire_0 test [pass]")
 
 async def control_signal_test_4(bpu):
     await bpu.reset()
@@ -310,35 +341,6 @@ async def control_signal_test_4(bpu):
 
     info("[控制信号测试4] io_s(1、2)_fire_0 test [pass]")
 
-async def ctest(bpu):
-    await bpu.reset()
-
-    radix = 1
-    entrys = tuple((generate_new_ftb_entry(is_0_taken=0, is_1_taken=0) for _ in range(radix)))
-
-    case_part_0 = tuple((0x11000, 
-                          gen_update_request(generate_pc(0x1, 0x1 * i), 
-                                             entrys[i], 
-                                             (1, 1), 
-                                             meta_hit = 0, 
-                                             old_entry = 0,
-                                             meta_writeWay=0),
-                          1, 1, 1) for i in range(radix))
-
-    cases = case_part_0
-            
-    for i in range(len(cases)):
-        # info(i)
-        output, model = await bpu.drive_once(cases[i][0], 
-                                         update_request = cases[i][1],
-                                         s0_fire = cases[i][2],
-                                         s1_fire = cases[i][3],
-                                         s2_fire = cases[i][4],)
-
-    await ClockCycles(bpu.dut, 10)
-
-    info("[控制信号测试4] io_s(1、2)_fire_0 test [pass]")
-
 async def control_signal_test_5(bpu):
     await bpu.reset()
 
@@ -357,46 +359,113 @@ async def control_signal_test_5(bpu):
     case_part_2 = tuple(((generate_pc(0x1 * i, 0x1), None, 1, 0, 1) for i in range(radix))) 
     case_part_3 = tuple(((generate_pc(0x1 * i, 0x1), None, 1, 1, 1) for i in range(radix))) 
 
-    cases = case_part_0 + case_part_1 + case_part_2 + case_part_3
+    cases = case_part_0 + case_part_1 + case_part_2 + case_part_3 + case_part_3
             
     for i in range(len(cases)):
-
         output, model = await bpu.drive_once(cases[i][0], 
                                          update_request = cases[i][1],
                                          s0_fire = cases[i][2],
                                          s1_fire = cases[i][3],
                                          s2_fire = cases[i][4],)
         
-        if i < 8:
+        if i < 9:
             meta = parse_uftb_meta(bpu.dut_out.last_stage_meta.value)
             assert meta['pred_way'] == 0
             assert meta['hit'] == 1
             await ClockCycles(bpu.dut, 2)
-        elif i >= 8 and i < 12:
+        elif i >= 9 and i < 13:
             await ClockCycles(bpu.dut, 2)
             meta = parse_uftb_meta(bpu.dut_out.last_stage_meta.value)
             assert meta['pred_way'] == 3
-            assert meta['hit'] == 1
-        elif i == 12:
-            await ClockCycles(bpu.dut, 2)
-            meta = parse_uftb_meta(bpu.dut_out.last_stage_meta.value)
-            assert meta['pred_way'] == 0
             assert meta['hit'] == 1
         elif i == 13:
             await ClockCycles(bpu.dut, 2)
             meta = parse_uftb_meta(bpu.dut_out.last_stage_meta.value)
-            assert meta['pred_way'] == 1
+            assert meta['pred_way'] == 0
             assert meta['hit'] == 1
         elif i == 14:
             await ClockCycles(bpu.dut, 2)
             meta = parse_uftb_meta(bpu.dut_out.last_stage_meta.value)
-            assert meta['pred_way'] == 2
+            assert meta['pred_way'] == 1
             assert meta['hit'] == 1
         elif i == 15:
             await ClockCycles(bpu.dut, 2)
             meta = parse_uftb_meta(bpu.dut_out.last_stage_meta.value)
+            assert meta['pred_way'] == 2
+            assert meta['hit'] == 1
+        elif i == 16:
+            await ClockCycles(bpu.dut, 2)
+            meta = parse_uftb_meta(bpu.dut_out.last_stage_meta.value)
             assert meta['pred_way'] == 3
+            assert meta['hit'] == 1
+        elif i == 17:
+            await ClockCycles(bpu.dut, 2)
+            meta = parse_uftb_meta(bpu.dut_out.last_stage_meta.value)
+            assert meta['pred_way'] == 0
+            assert meta['hit'] == 1
+        elif i == 18:
+            await ClockCycles(bpu.dut, 2)
+            meta = parse_uftb_meta(bpu.dut_out.last_stage_meta.value)
+            assert meta['pred_way'] == 1
+            assert meta['hit'] == 1
+        elif i == 19:
+            await ClockCycles(bpu.dut, 2)
+            meta = parse_uftb_meta(bpu.dut_out.last_stage_meta.value)
+            assert meta['pred_way'] == 2
             assert meta['hit'] == 1
 
 
     info("[控制信号测试5] last_stage_meta test [pass]")
+
+async def control_signal_test_4(bpu):
+    await bpu.reset()
+
+    radix = 1
+    entrys = tuple((generate_new_ftb_entry(is_0_taken=0, is_1_taken=0) for _ in range(radix)))
+
+    case_part_0 = tuple((0x11000, 
+                          gen_update_request(generate_pc(0x1, 0x1 * i), 
+                                             entrys[i], 
+                                             (1, 1), 
+                                             meta_hit = 0, 
+                                             old_entry = 0,
+                                             meta_writeWay=0),
+                          1, 1, 1) for i in range(radix))
+    case_part_1 = tuple(((generate_pc(0x1, 0x1 * i), None, 1, 0, 0) for i in range(radix)))
+    case_part_2 = tuple(((generate_pc(0x1, 0x1 * i), None, 1, 0, 1) for i in range(radix)))
+    case_part_3 = tuple(((generate_pc(0x1, 0x1 * i), None, 1, 1, 0) for i in range(radix)))
+    case_part_4 = tuple(((generate_pc(0x1, 0x1 * i), None, 1, 1, 1) for i in range(radix)))
+    case_part_5 = tuple(((generate_pc(0x1, 0x1 * i), None, 0, 1, 1) for i in range(radix)))
+    case_part_6 = tuple(((generate_pc(0x1, 0x1 * i), None, 0, 0, 0) for i in range(radix)))
+    case_part_7 = tuple(((generate_pc(0x1, 0x1 * i), None, 1, 0, 0) for i in range(radix)))
+
+    cases = case_part_0 + case_part_1 + case_part_2 + case_part_3 + \
+            case_part_4 + case_part_5 + case_part_6 + case_part_7
+            
+    for i in range(len(cases)):
+        # info(i)
+        output, model = await bpu.drive_once(cases[i][0], 
+                                         update_request = cases[i][1],
+                                         s0_fire = cases[i][2],
+                                         s1_fire = cases[i][3],
+                                         s2_fire = cases[i][4],)
+        
+        if i < 1:
+            # await ClockCycles(bpu.dut, 2)
+            # assert bpu.dut.io_out_s2_full_pred_0_hit.value == 0
+            # assert bpu.dut.io_out_s3_full_pred_0_hit.value == 0
+            await ClockCycles(bpu.dut, 2)
+        elif i >= 1 and i < 3:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut.io_out_s2_full_pred_0_hit.value == 0
+            assert bpu.dut.io_out_s3_full_pred_0_hit.value == 0
+        elif i >= 3 and i < 4:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut.io_out_s2_full_pred_0_hit.value == 1
+            assert bpu.dut.io_out_s3_full_pred_0_hit.value == 0
+        else:
+            await ClockCycles(bpu.dut, 2)
+            assert bpu.dut.io_out_s2_full_pred_0_hit.value == 1
+            assert bpu.dut.io_out_s3_full_pred_0_hit.value == 1
+
+    info("[控制信号测试4] io_s(1、2)_fire_0 test [pass]")

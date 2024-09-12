@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 ## 初始文件名
 filename="$1"
 
@@ -16,14 +16,14 @@ find_dependencies() {
   processed_files[$1]=$1
 
   # 查找文件中的依赖模块
-  grep -E '^\s*[a-zA-Z0-9_]+\s+[a-zA-Z0-9_]+\s* \(' "$1" | awk '{print $1}' | uniq | while read -r module; do
+  while read -r module; do
     # 递归查找模块的依赖
     if [ -f "${module}.sv" ]; then
       find_dependencies "${module}.sv"
     elif [ -f "${module}.v" ]; then
       find_dependencies "${module}.v"
     fi
-  done
+  done < <(grep -E '^\s*[a-zA-Z0-9_]+\s+[a-zA-Z0-9_]+\s* \(' "$1" | awk '{print $1}' | uniq)
 }
 
 # 开始查找依赖

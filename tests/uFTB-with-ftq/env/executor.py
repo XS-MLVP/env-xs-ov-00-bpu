@@ -43,7 +43,8 @@ class Executor:
             inst_len = self._current_branch["pc"] - self._current_pc
             self._current_pc = self._current_branch["pc"]
 
-        elif (self._current_branch["pc"] == self._current_pc):
+        elif (self._current_branch["pc"] <= self._current_pc):
+            # When current pc < next branch pc, force to execute next branch
             inst_len = Executor.branch_inst_len(self._current_branch)
             self._current_pc = self._current_branch["target"] if self._current_branch["taken"] \
                 else self._current_pc + inst_len

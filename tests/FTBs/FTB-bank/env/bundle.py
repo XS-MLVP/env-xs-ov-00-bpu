@@ -17,7 +17,14 @@ class IoInBundle(Bundle):
 
     def __init__(self):
         super().__init__()
-        self.prediction_input = PredictionInputBundle.from_regex(r"bits_resp_in_0_s\d_full_pred_\d_(.*)")
+        self.s2_prediction_0_input = PredictionInputBundle.from_regex(r"bits_resp_in_0_s2_full_pred_0_(.*)")
+        self.s2_prediction_1_input = PredictionInputBundle.from_regex(r"bits_resp_in_0_s2_full_pred_1_(.*)")
+        self.s2_prediction_2_input = PredictionInputBundle.from_regex(r"bits_resp_in_0_s2_full_pred_2_(.*)")
+        self.s2_prediction_3_input = PredictionInputBundle.from_regex(r"bits_resp_in_0_s2_full_pred_3_(.*)")
+        self.s3_prediction_0_input = PredictionInputBundle.from_regex(r"bits_resp_in_0_s3_full_pred_0_(.*)")
+        self.s3_prediction_1_input = PredictionInputBundle.from_regex(r"bits_resp_in_0_s3_full_pred_1_(.*)")
+        self.s3_prediction_2_input = PredictionInputBundle.from_regex(r"bits_resp_in_0_s3_full_pred_2_(.*)")
+        self.s3_prediction_3_input = PredictionInputBundle.from_regex(r"bits_resp_in_0_s3_full_pred_3_(.*)")
     
 class EnableCtrlBundle(Bundle):
     signals = ["btb_enable"]

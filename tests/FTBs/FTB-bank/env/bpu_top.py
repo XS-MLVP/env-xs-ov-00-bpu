@@ -51,11 +51,30 @@ class BPUTop:
         self.ftb_model = FTBBank()
         self.ftb_provider = FTBProvider()
 
-    def pipeline_assign(self, s0_f, s1_f, s2_f, s0_pc, btb_enable, s1_ready: int = 1):
+    def pipeline_assign(self, s0_f, s1_f, s2_f, s0_pc, btb_enable, s1_ready: int = 1, s2_musk_0: int = 0, s2_musk_1: int = 0, s3_musk_0: int = 0, s3_musk_1: int = 0):
 
-        # self.pipeline_ctrl.s1_ready.value = s1_ready
-        # self.dut.io_s1_ready.value = s1_ready
-        # assert_equal(self.dut.io_s1_ready.value, s1_ready)
+        self.io_in.s2_prediction_0_input.br_taken_mask_0.value = s2_musk_0
+        self.io_in.s2_prediction_0_input.br_taken_mask_1.value = s2_musk_1
+        self.io_in.s2_prediction_1_input.br_taken_mask_0.value = s2_musk_0
+        self.io_in.s2_prediction_1_input.br_taken_mask_1.value = s2_musk_1
+        self.io_in.s2_prediction_2_input.br_taken_mask_0.value = s2_musk_0
+        self.io_in.s2_prediction_2_input.br_taken_mask_1.value = s2_musk_1
+        self.io_in.s2_prediction_3_input.br_taken_mask_0.value = s2_musk_0
+        self.io_in.s2_prediction_3_input.br_taken_mask_1.value = s2_musk_1
+        self.io_in.s3_prediction_0_input.br_taken_mask_0.value = s3_musk_0
+        self.io_in.s3_prediction_0_input.br_taken_mask_1.value = s3_musk_1
+        self.io_in.s3_prediction_1_input.br_taken_mask_0.value = s3_musk_0
+        self.io_in.s3_prediction_1_input.br_taken_mask_1.value = s3_musk_1
+        self.io_in.s3_prediction_2_input.br_taken_mask_0.value = s3_musk_0
+        self.io_in.s3_prediction_2_input.br_taken_mask_1.value = s3_musk_1
+        self.io_in.s3_prediction_3_input.br_taken_mask_0.value = s3_musk_0
+        self.io_in.s3_prediction_3_input.br_taken_mask_1.value = s3_musk_1
+
+
+        assert_equal(self.dut.io_in_bits_resp_in_0_s2_full_pred_0_br_taken_mask_0.value, s2_musk_0)
+        assert_equal(self.dut.io_in_bits_resp_in_0_s2_full_pred_0_br_taken_mask_1.value, s2_musk_1)
+        assert_equal(self.dut.io_in_bits_resp_in_0_s3_full_pred_0_br_taken_mask_0.value, s3_musk_0)
+        assert_equal(self.dut.io_in_bits_resp_in_0_s3_full_pred_0_br_taken_mask_1.value, s3_musk_1)
 
         self.pipeline_ctrl.s0_fire_0.value = s0_f
         self.pipeline_ctrl.s0_fire_1.value = s0_f
@@ -229,13 +248,13 @@ class BPUTop:
         ## Update Request
         # info(update_request)
         if update_request is not None:
-            self.dut_update.valid.value = 1
+            # self.dut_update.valid.value = 1
             self.ftb_model.update(update_request)
             self.ftb_provider.update(update_request)
             del update_request['bits_br_taken_mask_0']
             del update_request['bits_br_taken_mask_1']
             self.dut_update.assign(update_request)
-            assert_equal(self.dut.io_update_valid.value, 1)
+            assert_equal(self.dut.io_update_valid.value, update_request['valid'])
         else:
             self.dut_update.valid.value = 0
             assert_equal(self.dut.io_update_valid.value, 0)
@@ -284,13 +303,25 @@ class BPUTop:
                          s0_fire: int = 1, 
                          s1_fire: int = 0, 
                          s2_fire: int = 0, 
-                         btb_enable: int = 1):
+                         btb_enable: int = 1,
+                         s2_musk_0: int = 0,
+                         s2_musk_1: int = 0,
+                         s3_musk_0: int = 0,
+                         s3_musk_1: int = 0):
 
         self.s0_pc = s0_pc
         self.s0_fire = s0_fire
         self.s1_fire = s1_fire
         self.s2_fire = s2_fire
-        self.pipeline_assign(s0_fire, s1_fire, s2_fire, s0_pc, btb_enable)
+        self.pipeline_assign(s0_f = s0_fire, 
+                             s1_f = s1_fire, 
+                             s2_f = s2_fire, 
+                             s0_pc = s0_pc, 
+                             btb_enable = btb_enable, 
+                             s2_musk_0 = s2_musk_0, 
+                             s2_musk_1 = s2_musk_1, 
+                             s3_musk_0 = s3_musk_0, 
+                             s3_musk_1 = s3_musk_1)
         self.update_assign(update_request, redirect_request)
 
         await ClockCycles(self.dut, 1)

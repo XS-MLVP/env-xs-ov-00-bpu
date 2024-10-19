@@ -17,7 +17,7 @@ class EnableCtrlBundle(Bundle):
 
 
 class FTBEntryBundle(Bundle):
-    signals = ["brSlots_0_offset", "brSlots_0_lower", "brSlots_0_tarStat", "brSlots_0_valid",
+    signals = ["valid", "brSlots_0_offset", "brSlots_0_lower", "brSlots_0_tarStat", "brSlots_0_valid",
                "tailSlot_offset", "tailSlot_lower", "tailSlot_tarStat", "tailSlot_sharing", "tailSlot_valid",
                "pftAddr", "carry", "isCall", "isRet", "isJalr", "last_may_be_rvi_call",
                "always_taken_0", "always_taken_1"]
